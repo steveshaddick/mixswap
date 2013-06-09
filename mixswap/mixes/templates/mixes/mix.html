@@ -1,0 +1,15 @@
+<h1>{{ mix.title }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<p>Picture : {{ mix.picture_file }}</p>
+
+<div>
+	<h2>Songs:</h2>
+	{% for song in mix.songs.all %}
+	<p>
+		Title: {{ song.title }}<br>
+		Artist: {{ song.artist }}
+	</p>
+	{% endfor %}
+</div>

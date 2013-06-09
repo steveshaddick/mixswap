@@ -4,7 +4,9 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
+    url(r'^mix/', include('mixes.urls', namespace="mixes")),
     # Examples:
     # url(r'^$', 'mixswap.views.home', name='home'),
     # url(r'^mixswap/', include('mixswap.foo.urls')),
