@@ -7,3 +7,5 @@ settings.py
 
 mixswap-env/
 mixswap/settings/
+.sass-cache/
+/node_modules/
