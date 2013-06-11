@@ -1,3 +1,8 @@
+{% extends 'base.html' %}
+{% block page_class %}mix-page{% endblock %}
+
+
+{% block content %}
 <h1>{{ mix.title }}</h1>
 
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
@@ -13,3 +18,9 @@
 	</p>
 	{% endfor %}
 </div>
+
+{% if is_user_mix %}
+	<p>My mix!</p>
+{% endif %}
+
+{% endblock %}

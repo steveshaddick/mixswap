@@ -4,5 +4,5 @@ from mixes import views
 
 urlpatterns = patterns(
     '',
-    url(r'^(?P<pk>\d+)/$', views.DetailView.as_view(), name='mix'),
+    url(r'^(?P<pk>\d+)/$', views.mix, name='mix'),
 )
