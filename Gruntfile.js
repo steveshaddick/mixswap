@@ -2,7 +2,7 @@
 
 module.exports = function(grunt) {
 
-  var ASSET_PATH = "mixswap/static";
+  var ASSET_PATH = "static";
   var SRC_PATH = 'src';
 
   // Project configuration.
