@@ -32,39 +32,34 @@ module.exports = function(grunt) {
           options: {
             preserveComments: 'some',
             compress: false,
-            beautify: true
+            beautify: true,
+            report: 'min'
           },
-          files: {
-            '<%= ASSET_PATH %>/js/plugins.min.js' : [
-            ],
-            '<%= ASSET_PATH %>/js/Main.min.js': [
-              'js/Main.js'
-            ]
-          }
+          files: [
+            {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
+            {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
+          ]
         },
         prod: {
           options: {
             preserveComments: 'some'
           },
-          files: {
-            '<%= ASSET_PATH %>/js/plugins.min.js' : [
-            ],
-            '<%= ASSET_PATH %>/js/Main.min.js': [
-              'js/Main.js'
-            ]
-          }
+          files: [
+            {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
+            {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
+          ]
         }
       },
     watch: {
       styles: {
-        files: SRC_PATH + 'scss/*.scss',
+        files: SRC_PATH + '/scss/*.scss',
         tasks: ['compass'],
         options: {
           interrupt: true
         }
       },
       scripts: {
-        files: SRC_PATH + 'js/**/*.js',
+        files: SRC_PATH + '/js/**/*.js',
         tasks: ['uglify:dev'],
         options: {
           interrupt: true
@@ -79,7 +74,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compass');
 
   // Default task.
-  grunt.registerTask('default', ['watch']);
+  grunt.registerTask('default', ['compass', 'uglify:dev', 'watch']);
   grunt.registerTask('prod', ['compass', 'uglify:prod']);
 
 };
