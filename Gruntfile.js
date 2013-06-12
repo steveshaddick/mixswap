@@ -28,28 +28,28 @@ module.exports = function(grunt) {
     },
 
     uglify: {
-        dev: {
-          options: {
-            preserveComments: 'some',
-            compress: false,
-            beautify: true,
-            report: 'min'
-          },
-          files: [
-            {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
-            {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
-          ]
+      dev: {
+        options: {
+          preserveComments: 'some',
+          compress: false,
+          beautify: true
         },
-        prod: {
-          options: {
-            preserveComments: 'some'
-          },
-          files: [
-            {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
-            {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
-          ]
-        }
+        files: [
+          {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
+          {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
+        ]
       },
+      prod: {
+        options: {
+          preserveComments: 'some'
+        },
+        files: [
+          {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
+          {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
+        ]
+      }
+    },
+    
     watch: {
       styles: {
         files: SRC_PATH + '/scss/*.scss',
@@ -66,6 +66,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
   });
 
   // These plugins provide necessary tasks.
