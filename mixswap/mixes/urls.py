@@ -5,4 +5,6 @@ from mixes import views
 urlpatterns = patterns(
     '',
     url(r'^(?P<pk>\d+)/$', views.mix, name='mix'),
+    url(r'^(?P<pk>\d+)/upload_picture/$', views.upload_picture, name='upload_picture'),
+    url(r'^(?P<pk>\d+)/delete_picture/$', views.delete_picture, name='delete_picture'),
 )

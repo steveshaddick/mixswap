@@ -2,10 +2,11 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 import os
+import time
 
 
 def get_upload_path(instance, filename):
-    return os.path.join(settings.MEDIA_ROOT, "user_%d" % instance.user.id, "photos", filename)
+    return os.path.join(settings.MEDIA_ROOT, "user_%d" % instance.user.id, "photos", "user_{0}_{1}{2}".format(instance.user.id, int(time.time()), os.path.splitext(filename)[1]))
 
 
 class Song(models.Model):

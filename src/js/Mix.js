@@ -78,7 +78,6 @@ function Mix(_mixId, _isMyMix, _isPublished, _bgImage)
 			me.elements['commentsSection'].style.display = "none";
 			
 			document.getElementById('btnUploadSong').onclick = uploadSong;
-			document.getElementById('btnUploadBG').onclick = uploadBG;
 			
 			for (var i=0, len=songs.length; i<len; i++)
 			{
@@ -101,7 +100,6 @@ function Mix(_mixId, _isMyMix, _isPublished, _bgImage)
 			me.elements['commentsSection'].style.display = "block";
 			
 			document.getElementById('btnUploadSong').onclick = null;
-			document.getElementById('btnUploadBG').onclick = null;
 			
 			for (var i=0, len=songs.length; i<len; i++)
 			{
@@ -251,7 +249,7 @@ function Mix(_mixId, _isMyMix, _isPublished, _bgImage)
 	
 	function setBG(_bgImage)
 	{
-		document.body.style.backgroundImage = 'url(' + mixFolder + _bgImage +')';
+		//document.body.style.backgroundImage = 'url(' + mixFolder + _bgImage +')';
 	}
 	
 	function dragStart(e)

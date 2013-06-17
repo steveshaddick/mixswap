@@ -67,9 +67,13 @@
 
 <section id="scnChangeBG">
     <h1>Change background picture</h1>
-    <form id="frmUploadBG" action="{{ 'upload picture' }}" enctype="multipart/form-data" method="POST" target="iUpload">
-        <input id="bgFile" type="file" name="bgFile" size="20">
-        <input id="btnUploadBG" type="button" value="Upload">
+    <form id="uploadPictureForm" action="{% url 'mixes:upload_picture' mix.pk %}" enctype="multipart/form-data" method="POST">
+        <p>{{ picture_form.picfile.label_tag }} {{ picture_form.picfile.help_text }}</p>
+        <p>
+            {{ picture_form.picfile.errors }}
+            {{ picture_form.picfile }}
+        </p>
+        <input type="submit" value="Upload">
     </form>
 </section>
 
