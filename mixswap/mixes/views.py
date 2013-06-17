@@ -42,9 +42,9 @@ def delete_picture(request, pk, return_http=True):
             return False
 
     if (mix.picture_file):
-        os.remove(str(mix.picture_file))
         mix.picture_file = ''
         mix.save()
+        os.remove(str(mix.picture_file))
 
     return True
 

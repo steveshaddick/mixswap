@@ -9,3 +9,4 @@ mixswap-env/
 mixswap/settings/
 .sass-cache/
 /node_modules/
+/media/
