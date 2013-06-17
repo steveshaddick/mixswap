@@ -6,7 +6,6 @@ from django.utils import simplejson
 from django.conf import settings
 
 import os
-import getpass
 
 from mixes.models import Mix
 from mixes.forms import PictureForm
@@ -68,7 +67,7 @@ def upload_picture(request, pk):
                 response_dict['success'] = False
                 response_dict['error'] = 'Delete error.'
                 return HttpResponse(simplejson.dumps(response_dict), mimetype='application/json')
-            
+
             mix.picture_file = request.FILES['picfile']
             mix.save()
 
