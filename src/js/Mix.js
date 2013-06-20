@@ -1,4 +1,4 @@
-var mix;
+/*var mix;
 
 function Mix(_mixId, _isMyMix, _isPublished, _bgImage)
 {
@@ -645,4 +645,4 @@ function handleOrientationChange() {
 			// Handle device in portrait mode upside-down.
 			break;
 	}
-}
+}*/

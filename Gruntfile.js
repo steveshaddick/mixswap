@@ -5,6 +5,11 @@ module.exports = function(grunt) {
   var ASSET_PATH = "static";
   var SRC_PATH = 'src';
 
+  var jsFiles = [
+    {src: [SRC_PATH + '/js/lib/**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
+    {src: [SRC_PATH + '/js/models/*.js', SRC_PATH + '/js/views/*.js', SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
+  ];
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -34,19 +39,13 @@ module.exports = function(grunt) {
           compress: false,
           beautify: true
         },
-        files: [
-          {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
-          {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
-        ]
+        files: jsFiles
       },
       prod: {
         options: {
           preserveComments: 'some'
         },
-        files: [
-          {src: [SRC_PATH + '/js/lib**/*.js'], dest: ASSET_PATH + '/js/plugins.min.js'},
-          {src: [SRC_PATH + '/js/*.js'], dest: ASSET_PATH + '/js/main.min.js'}
-        ]
+        files: jsFiles
       }
     },
     

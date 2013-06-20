@@ -2,14 +2,14 @@ var GLOBAL = {
 	csrfToken : ''
 };
 
-var Main = (function() {
+function csrfSafeMethod(method) {
+	// these HTTP methods do not require CSRF protection
+	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
 
-	function csrfSafeMethod(method) {
-		// these HTTP methods do not require CSRF protection
-		return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-	}
+var App = {
 
-	function init() {
+	init: function(data) {
 
 		GLOBAL.csrfToken = Cookie.get('csrftoken');
 
@@ -21,6 +21,23 @@ var Main = (function() {
 				}
 			}
 		});
+
+		var oldSync = Backbone.sync;
+		Backbone.sync = function(method, model, options) {
+			options.beforeSend = function(xhr){
+				xhr.setRequestHeader('X-CSRFToken', GLOBAL.csrfToken);
+			};
+			return oldSync(method, model, options);
+		};
+		Backbone.emulateHTTP = true;
+
+		this.mixView = new MixView({
+			model: new Mix(data),
+			el: $("#mix")[0]
+		}).render();
+
+		//this.mixView.model.save({username: "hello"}, {patch:true});
+		this.mixView.songs.collection.get(1).set({title : "New Title"});
 
 		$("#picUploader").pluploadQueue({
 			// General settings
@@ -129,8 +146,5 @@ var Main = (function() {
 		});*/
 	}
 
-	return {
-		init: init
-	};
 
-})();
+};

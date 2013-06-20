@@ -16,17 +16,21 @@ def mix(request, pk):
     mix = get_object_or_404(Mix, pk=pk)
     is_user_mix = mix.user == request.user
     picture_form = PictureForm()
-    return render(
-        request,
-        'mixes/mix.html',
-        {
-            'mix': mix,
-            'user': mix.user,
-            'is_user_mix': is_user_mix,
-            'picture_form': picture_form
-        }
-    )
 
+    if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
+        return HttpResponse(simplejson.dumps({'method': request.META['HTTP_X_HTTP_METHOD_OVERRIDE']}), mimetype='application/json')
+    else:
+        return render(
+            request,
+            'mixes/mix.html',
+            {
+                'mix': mix,
+                'user': mix.user,
+                'is_user_mix': is_user_mix,
+                'picture_form': picture_form
+            }
+        )
+    
 
 def delete_picture(request, pk, return_http=True):
     try:

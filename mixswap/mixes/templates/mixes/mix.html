@@ -5,44 +5,44 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 
 {% block content %}
-<h1></h1>
 <div id="back">
 	<a href="{% url 'home' %}"><span style="font-size:50px;">&laquo;</span> <span style="line-height: 38px;margin-top: 5px;text-transform: uppercase;vertical-align: top;">home</span></a>
 </div>
 
 <div id="contentWrapper">
-    <header>
-        <span id="mixTitle">{{ mix.title }}</span><br />
-        <span id="mixUserName">by {{ user.first_name }}</span>
-        <span id="mixDownload"><a href="{{ 'download' }}">download</a></span>
-    </header>
-    
-    <nav>
-    </nav>
-    
-    <section id="scnAudioPlayer">
-        <audio id="audioElement" src="" controls="controls">
-            Your browser does not support the audio tag.
-        </audio>
-         <div id="currentTrackInfo">
-	        <span id="currentTitle"></span><br /><span id="currentArtist"></span>
-        </div>
-    </section>
-    
-    <section id="scnMixList">
-        <div id="songList"></div>
-    </section>
-    
-    <section id="scnAddTrack">
-    	<h1>Add song</h1>
-        <form id="frmUploadSong" action="{{ 'upload mix' }}" enctype="multipart/form-data" method="POST" target="iUpload">
-			<input id="songFiles" type="file" name="songFiles" size="20" multiple>
-            <input id="btnUploadSong" type="button" value="Upload">
-        </form>
-        <br />
-        <!--<h2>FTP Upload: </h2>
-        <span class="ftpUpload">Mix #<?=$mixId?> <a href="php/ftpRefresh.php?m=<?=$mixId?>" id="ftpRefreshLink">FTP Refresh</a></span>-->
-    </section>
+    <div id="mix">
+
+        <header>
+            <h1 id="mixTitle"></h1>
+            <span id="mixUsername"></span>
+            <span id="mixDownload"><a class="mix-download-link" href="{{ 'download' }}">download</a></span>
+        </header>
+        
+        <nav>
+        </nav>
+        
+        <section id="scnAudioPlayer">
+            <audio id="audioElement" src="" controls="controls">
+                Your browser does not support the audio tag.
+            </audio>
+             <div id="currentTrackInfo">
+    	        <span id="currentTitle"></span><br><span id="currentArtist"></span>
+            </div>
+        </section>
+        
+        <section id="scnMixList">
+            <ul id="songList" class="song-list"></ul>
+        </section>
+        
+        <section id="scnAddTrack">
+        	<h1>Add song</h1>
+            <form id="frmUploadSong" action="{{ 'upload mix' }}" enctype="multipart/form-data" method="POST" target="iUpload">
+    			<input id="songFiles" type="file" name="songFiles" size="20" multiple>
+                <input id="btnUploadSong" type="button" value="Upload">
+            </form>
+            <br>
+        </section>
+    </div>
     
     
     <section id="scnPublishMix">
@@ -61,10 +61,6 @@
 </div>
 
 
-{% if is_user_mix %}
-    <p>My mix!</p>
-{% endif %}
-
 <section id="scnChangeBG">
     <h1>Change background picture</h1>
     <form id="uploadPictureForm" action="{% url 'mixes:upload_picture' mix.pk %}" enctype="multipart/form-data" method="POST">
@@ -75,7 +71,7 @@
 <footer>
 </footer>
 
-<section id="classRef" style="display:none; visibility:hidden; height:0; width:0;">
+<section id="templates" style="display:none;">
 	
     <div id="refSongItem" class="songItem" draggable="false">
 		<div class="divDrag"><a class="hitDrag" href="#" onClick="return false;">&bull;</a></div>           
@@ -85,25 +81,39 @@
     </div>
     
     <article id="refCommentItem" class="commentItem">
-    	<span class="commentUserName"></span> <time class="commentTime" datetime=""></time><br />
+    	<span class="commentUserName"></span> <time class="commentTime" datetime=""></time><br>
         <span class="commentText"></span>
     </article>
     
    <iframe id="iUpload" name="iUpload" src="#" style="display:none;visibility:hidden;width:0;height:0;"></iframe> 
 
 </section>
+{% endblock %}
 
+{% block scripts %}
 <script type="text/javascript">
+    $(document).ready(function() {
 
-    mix = new Mix({{ mix.id }}, {% if is_user_mix %}true{% else %}false{% endif %}, {% if mix.is_published %}true{% else %}false{% endif %}, '{{ mix.picture_file }}');
+        App.init({
+            id: {{ mix.id }}, 
+            title: '{{ mix.title }}',
+            username: '{{ user.first_name }}',
+            isUserMix: {% if is_user_mix %}true{% else %}false{% endif %}, 
+            isPublished: {% if mix.is_published %}true{% else %}false{% endif %}, 
+            pictureFile: '{{ mix.picture_file }}',
+            songs: [
+                {% for song in mix.songs.all %}
+                    {% if not forloop.first %}, {% endif %}
+                    {id: {{ song.id }}, mixId: {{ mix.id }}, artist: "{{ song.artist }}", title: "{{ song.title }}", prefix: "{{ song.song_prefix }}", isUserFav: {% if user in song.favourites %}true{% else %}false{% endif %}, totalFav: {{ song.favourites.all|length }} }
+                {% endfor %}
+            ]
+        });
+    });
 
-    {% for song in mix.songs.all %}
-        mix.addSong({{ song.id }}, "{{ song.artist }}", "{{ song.title }}", "{{ song.song_prefix }}", {% if user in song.favourites %}true{% else %}false{% endif %}, {{ song.favourites.all|length }});
-    {% endfor %}
+    
 
     {% for comment in mix.comment_set.all %}
-        mix.addComment("{{ comment.user.first_name }}", "{{ comment.date }}", "{{ comment.text|linebreaks }}");
-        {# str_replace(\n, ) #}
+       // mix.addComment("{{ comment.user.first_name }}", "{{ comment.date }}", "{{ comment.text|linebreaks }}");
     {% endfor %}
 
 
