@@ -33,7 +33,7 @@ var Mix = Backbone.Model.extend({
 		title: 'Mix Title',
 		username: 'Dude',
 		isUserMix: false,
-		pictureFiel: '',
+		pictureFile: '',
 		songs: [],
 		comments: []
 	},

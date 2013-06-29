@@ -1,20 +1,39 @@
 var MixView = Backbone.View.extend({
 	
 	initialize: function () {
-		this.listenTo(this.model, "change:title", this.render);
+		this.listenTo(this.model, "change:title", this.onChangeTitle);
 
 		this.songs = new SongCollectionView({
 			collection: this.model.songs,
 			el: $(".song-list", this.el)[0]
 		});
 		this.songs.collection.trigger('reset');
+	},
 
+	onChangeTitle: function(model, options) {
+		this.model.save(this.model.changed, {patch: true});
 	},
 
 	render: function() {
-			
+		console.log("rendering mix");
+
 		$("#mixTitle").html(this.model.attributes.title);
 		$("#mixUsername").html('by ' + this.model.attributes.username);
+
+
+		if ((!this.options.isPublished) && (this.options.isUserMix)){
+			var me = this;
+
+			$('body').addClass('admin');
+			$('#mixTitle').editable({	
+				type: 'text',
+				showbuttons: false,
+				title: 'Enter title',
+				inputclass: 'mix-title'
+			}).on('save', function(e, params){
+				me.model.set('title', params.newValue);
+			});
+		}
 
 		return this;
 	}

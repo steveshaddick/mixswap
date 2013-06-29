@@ -22,6 +22,8 @@ var App = {
 			}
 		});
 
+		$.fn.editable.defaults.mode = 'inline';
+
 		var oldSync = Backbone.sync;
 		Backbone.sync = function(method, model, options) {
 			options.beforeSend = function(xhr){
@@ -33,7 +35,10 @@ var App = {
 
 		this.mixView = new MixView({
 			model: new Mix(data),
-			el: $("#mix")[0]
+			el: $("#mix")[0],
+			id: data.id,
+			isUserMix: data.isUserMix,
+			isPublished: data.isPublished
 		}).render();
 
 		//this.mixView.model.save({username: "hello"}, {patch:true});

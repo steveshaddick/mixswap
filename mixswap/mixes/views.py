@@ -2,10 +2,9 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
-from django.utils import simplejson
 from django.conf import settings
 
-import os
+import os,json
 
 from mixes.models import Mix
 from mixes.forms import PictureForm
@@ -18,7 +17,16 @@ def mix(request, pk):
     picture_form = PictureForm()
 
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
-        return HttpResponse(simplejson.dumps({'method': request.META['HTTP_X_HTTP_METHOD_OVERRIDE']}), mimetype='application/json')
+
+        data = json.loads(request.body)
+        response = {}
+        if request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'PATCH':
+            mix.title = data['title']
+            mix.save()
+            response['title'] = data['title']
+            response['method'] = 'patch'
+
+        return HttpResponse(json.dumps(response), mimetype='application/json')
     else:
         return render(
             request,
@@ -41,7 +49,7 @@ def delete_picture(request, pk, return_http=True):
             response_dict = {}
             response_dict['success'] = False
             response_dict['error'] = 'No Mix.'
-            return HttpResponse(simplejson.dumps(response_dict), mimetype='application/json')
+            return HttpResponse(json.dumps(response_dict), mimetype='application/json')
         else:
             return False
 
@@ -61,7 +69,7 @@ def upload_picture(request, pk):
     except mix.DoesNotExist:
         response_dict['success'] = False
         response_dict['error'] = 'No Mix.'
-        return HttpResponse(simplejson.dumps(response_dict), mimetype='application/json')
+        return HttpResponse(json.dumps(response_dict), mimetype='application/json')
 
     if request.method == 'POST':
         form = PictureForm(request.POST, request.FILES)
@@ -70,7 +78,7 @@ def upload_picture(request, pk):
             if not delete_picture(request, pk, False):
                 response_dict['success'] = False
                 response_dict['error'] = 'Delete error.'
-                return HttpResponse(simplejson.dumps(response_dict), mimetype='application/json')
+                return HttpResponse(json.dumps(response_dict), mimetype='application/json')
 
             mix.picture_file = request.FILES['picfile']
             mix.save()
@@ -85,4 +93,4 @@ def upload_picture(request, pk):
         response_dict['success'] = False
         response_dict['error'] = 'No Post.'
 
-    return HttpResponse(simplejson.dumps(response_dict), mimetype='application/json')
+    return HttpResponse(json.dumps(response_dict), mimetype='application/json')
