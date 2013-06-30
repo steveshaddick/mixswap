@@ -20,7 +20,7 @@ class Mix(models.Model):
     picture_file = models.ImageField(upload_to=get_photo_upload_path, blank=True, null=True)
     is_published = models.BooleanField()
     date_published = models.DateField(blank=True, null=True)
-    songs = models.ManyToManyField('Song', blank=True, null=True)
+    songs = models.ManyToManyField('Song', through='MixSong', blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "mixes"
@@ -33,14 +33,12 @@ class Song(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=100)
     artist = models.CharField(max_length=100)
-    song_prefix = models.CharField(max_length=100)
     primary_mix = models.ForeignKey(Mix, related_name='primary+')
     song_file = models.FileField(upload_to=get_audio_upload_path, default='file')
-    favourites = models.ManyToManyField(User, related_name='fav+', blank=True, null=True)
-    date_uploaded = models.DateField()
+    date_uploaded = models.DateTimeField()
 
     def __unicode__(self):
-        return self.song_prefix
+        return self.title + '_' + self.artist
 
     @classmethod
     def create(cls, params):
@@ -51,12 +49,24 @@ class Song(models.Model):
             user=params['user'],
             title=title,
             artist=artist,
-            song_prefix=title + '_' + artist,
             primary_mix=params['mix'],
             song_file=params['song_file'],
-            date_uploaded=datetime.date.today()
+            date_uploaded=datetime.datetime.now()
         )
         return song
+
+
+class MixSong(models.Model):
+    mix = models.ForeignKey(Mix)
+    song = models.ForeignKey(Song)
+    song_order = models.PositiveIntegerField(default=1)
+    favourites = models.ManyToManyField(User, related_name='fav+', blank=True, null=True)
+
+    def __unicode__(self):
+        return self.song.title + '_' + self.song.artist
+
+    class Meta:
+        ordering = ('song_order',)
 
 
 class Comment(models.Model):

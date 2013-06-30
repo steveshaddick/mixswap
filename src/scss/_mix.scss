@@ -1,3 +1,45 @@
+.song-list {
+	
+	padding:0;
+	list-style-type:none;
+
+	&:after {
+		content: "."; 
+		visibility: hidden; 
+		display: block; 
+		height: 0; 
+		clear: both;
+	}
+
+	a {
+		text-decoration: none;
+		color:#060;
+	}
+
+	.song-item {
+		clear:both;
+	}
+
+	.song-order {
+		width:25px;
+		display:block;
+		float:left;
+	}
+	.song-wrapper {
+		float:left;    
+		width: 350px;    
+		margin-bottom: 10px;
+	}
+	.song-title {
+		font-size: 22px;
+	}
+	.song-artist {
+		font-size: 12px;
+		font-weight: bold;
+	}
+}
+
+
 
 .add-song-block {
 	display:none;
@@ -12,7 +54,7 @@
 		margin-bottom: 0;
 	}
 
-	 h2 {
+	h2 {
 		padding-top: 10px;
 		font-weight:normal;
 		display:inline;
@@ -32,7 +74,6 @@
 	.plupload_file_size {
 		display:none;
 	}
-
 }
  
 
@@ -41,14 +82,16 @@
 
 .unpublished {
 
-	.add-song-block {
-		display:block;
+	.favourite,
+	.fav-count {
+		display:none;
 	}
 
 	.comments {
 		display:none;
 	}
 
+	.add-song-block,
 	.publish-mix-block {
 		display:block;
 	}

@@ -6,7 +6,7 @@ from django.conf import settings
 
 import os, json
 
-from mixes.models import Mix, Song
+from mixes.models import Mix, Song, MixSong
 from mixes.forms import PictureForm, SongForm
 
 
@@ -47,10 +47,32 @@ def mix(request, pk):
             {
                 'mix': mix,
                 'user': mix.user,
+                'mix_songs': MixSong.objects.filter(mix=mix),
                 'is_user_mix': is_user_mix,
                 'picture_form': picture_form
             }
         )
+
+
+def update_song_order(request, pk):
+    try:
+        mix = Mix.objects.get(pk=pk, is_published=False)
+    except mix.DoesNotExist:
+        return jsonResponse({'error': 'No mix'})
+
+    if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
+
+        data = json.loads(request.body)
+        for data_song in data:
+            song = Song.objects.get(pk=data_song['id'])
+            mix_song = MixSong.objects.get(mix=mix, song=song)
+            mix_song.song_order = data_song['songOrder']
+            mix_song.save()
+
+        return jsonResponse(True)
+
+    else:
+        return jsonResponse(False)
 
 
 def upload_song(request, pk):
@@ -74,8 +96,14 @@ def upload_song(request, pk):
             })
             song.save()
 
-            mix.songs.add(song)
-            mix.save()
+            song_order = mix.songs.count() + 1
+
+            mixSong = MixSong(
+                mix=mix,
+                song=song,
+                song_order=song_order
+            )
+            mixSong.save()
 
             response['file'] = str(song.song_file)
             response['title'] = str(song.title)

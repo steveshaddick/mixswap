@@ -3,7 +3,7 @@ var MixView = Backbone.View.extend({
 	isPublished: true,
 	
 	initialize: function () {
-		this.listenTo(this.model, "change:title", this.onChangeTitle);
+		this.listenTo(this.model, "change:title", this.onChange);
 
 		this.songs = new SongCollectionView({
 			collection: this.model.songs,
@@ -12,7 +12,7 @@ var MixView = Backbone.View.extend({
 		this.songs.collection.trigger('reset');
 	},
 
-	onChangeTitle: function(model, options) {
+	onChange: function(model, options) {
 		this.model.save(this.model.changed, {patch: true});
 	},
 
@@ -123,32 +123,60 @@ var MixView = Backbone.View.extend({
 
 var SongCollectionView = Backbone.View.extend({
 	
+	changed: [],
+
 	initialize: function () {
 		var that = this;
 
 		this.listenTo(this.collection, "reset", this.renderReset);
+		this.listenTo(this.collection, "changeSongOrder", this.onChangeOrder);
 
 		this.songViews = [];
 		this.collection.each(function(item) {
 			that.songViews.push(new SongView({
 				model: item,
-				tagName: 'li',
-				id: "song_" + item.attributes.id,
-				className: 'title'
+				id: "song_" + item.attributes.id
 			}));
 		});
 
 	},
 
 	renderReset: function() {
-
+		console.log("collection reset");
 		var that = this;
 
+		this.$el.empty();
 		_(this.songViews).each(function(item) {
 			that.$el.append(item.render().$el);
 		});
 
+		this.$el.sortable({
+			update:function(event, ui) {
+				that.changed = [];
+				var $item;
+				var count = 1;
+				var songModel;
+				$(".song-item", that.$el).each(function() {
+					$item = $(this);
+					if ($item.attr('data-order') != count) {
+						songModel = that.collection.get($item.attr('id').replace('song_', ''));
+						songModel.set('songOrder', count);
+						that.changed.push(songModel);
+					}
+					count ++;
+				});
+
+				that.collection.trigger('changeSongOrder');
+			}
+		});
+
 		return this;
+	},
+
+	onChangeOrder: function() {
+
+		console.log("change order");
+		this.collection.updateSongOrder();
 	}
 });
 
@@ -156,20 +184,32 @@ var SongView = Backbone.View.extend({
 
 	initialize: function() {
 		this.listenTo(this.model, "change:title", this.renderTitle);
+		this.listenTo(this.model, "change:songOrder", this.renderSongOrder);
 
 	},
 
 	render: function() {
 		console.log("render songview");
-		this.$el.html(this.model.attributes.title);
+		var $item = $("#tmpSongItem").clone();
 
+		$item.attr('id', this.id).attr('data-order', this.model.songOrder);
+		$('.song-title', $item).html(this.model.attributes.title);
+		$('.song-artist', $item).html(this.model.attributes.artist);
+		$('.song-order', $item).html(this.model.attributes.songOrder);
+
+		this.$el = $item;
 
 		return this;
 	},
 
 	renderTitle: function() {
 		console.log("render title");
-		this.$el.html(this.model.attributes.title);
+		$('.song-title', this.$el).html(this.model.attributes.title);
+	},
+
+	renderSongOrder: function() {
+		console.log("render song order");
+		$('.song-order', this.$el).html(this.model.attributes.songOrder);
 	}
 });
 

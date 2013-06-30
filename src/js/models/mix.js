@@ -7,7 +7,7 @@ var Song = Backbone.Model.extend({
 		title: 'Untitled',
 		isUserFav: false,
 		totalFav: 0,
-		prefix: ''
+		songOrder: 1
 	},
 
 	initialize: function() {
@@ -17,7 +17,16 @@ var Song = Backbone.Model.extend({
 });
 
 var Songs = Backbone.Collection.extend({
-	model:Song
+	model:Song,
+	url: '',
+
+	comparator: function( collection ){
+		return( collection.get( 'songOrder' ) );
+	},
+
+	updateSongOrder: function() {
+		Backbone.sync('update', this, {});
+	}
 
 });
 
@@ -40,5 +49,6 @@ var Mix = Backbone.Model.extend({
 
 	initialize: function() {
 		this.songs = new Songs(this.attributes.songs);
+		this.songs.url = this.url() + 'update_song_order/';
     }
 });

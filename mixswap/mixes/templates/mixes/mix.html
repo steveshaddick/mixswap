@@ -30,7 +30,7 @@
             </div>
         </section>
         
-        <section id="scnMixList">
+        <section id="mixList" class="mix-list">
             <ul id="songList" class="song-list"></ul>
         </section>
         
@@ -72,12 +72,13 @@
 
 <section id="templates" style="display:none;">
 	
-    <div id="refSongItem" class="songItem" draggable="false">
-		<div class="divDrag"><a class="hitDrag" href="#" onClick="return false;">&bull;</a></div>           
-        <div class="divFavourite"><input id="chkFavourite" name="chkFavourite" class="chkFavourite" title="Favourite Track" type="checkbox" /></div>
-        <div class="divSong"><span class="songTrack"></span>. <a class="songLink" href="#"><span class="songTitle"></span> - <span class="songArtist"></span></a><span class="favCount"></span></div>
-        <div class="divSongDelete"><a class="songDeleteLink" href="#" onClick="return false;">x</a><a class="songEditLink" href="#" onClick="return false;">[edit]</a></div>
-    </div>
+    <li id="tmpSongItem" class="song-item">        
+        <div class="favouriteWrapper"><input id="chkFavourite" name="chkFavourite" class="favourite" title="Favourite Track" type="checkbox" /></div>
+        <span class="song-order"></span>
+        <div class="song-wrapper"><span class="song-title"></span><br><span class="song-artist"></span></div>
+        <span class="fav-count"></span>
+        <a class="song-delete" href="#" onClick="return false;">x</a>
+    </li>
     
     <article id="refCommentItem" class="commentItem">
     	<span class="commentUserName"></span> <time class="commentTime" datetime=""></time><br>
@@ -90,7 +91,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript">
+<script>
     $(document).ready(function() {
 
         App.init({
@@ -101,9 +102,9 @@
             isPublished: {% if mix.is_published %}true{% else %}false{% endif %}, 
             pictureFile: '{{ mix.picture_file }}',
             songs: [
-                {% for song in mix.songs.all %}
+                {% for mix_song in mix_songs.all %}
                     {% if not forloop.first %}, {% endif %}
-                    {id: {{ song.id }}, mixId: {{ mix.id }}, artist: "{{ song.artist }}", title: "{{ song.title }}", prefix: "{{ song.song_prefix }}", isUserFav: {% if user in song.favourites %}true{% else %}false{% endif %}, totalFav: {{ song.favourites.all|length }} }
+                    {id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: "{{ mix_song.song_order }}", isUserFav: {% if user in mix_song.favourites %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }
                 {% endfor %}
             ]
         });
