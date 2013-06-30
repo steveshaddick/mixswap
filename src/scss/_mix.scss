@@ -1,3 +1,63 @@
+
+.add-song-block {
+	display:none;
+	background-color:rgba(255,255,255,0.5);
+	border-top:thin solid;
+	padding:5px;
+	border-bottom-right-radius: 10px;
+
+	h1 {
+		line-height:25px;
+		color:#060;
+		margin-bottom: 0;
+	}
+
+	 h2 {
+		padding-top: 10px;
+		font-weight:normal;
+		display:inline;
+		font-size:14px;
+	}
+	a {
+		color:#060;
+	}
+
+	/** song uploader overrise **/
+	.plupload_container {
+		padding:0;
+	}
+	.plupload_header {
+		display:none;
+	}
+	.plupload_file_size {
+		display:none;
+	}
+
+}
+ 
+
+
+/** Mix admin **/
+
+.unpublished {
+
+	.add-song-block {
+		display:block;
+	}
+
+	.comments {
+		display:none;
+	}
+
+	.publish-mix-block {
+		display:block;
+	}
+
+}
+
+
+
+
 /** x-editable overrides **/
 
 input {

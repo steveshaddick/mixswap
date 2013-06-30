@@ -34,22 +34,21 @@
             <ul id="songList" class="song-list"></ul>
         </section>
         
-        <section id="scnAddTrack">
-        	<h1>Add song</h1>
-            <form id="frmUploadSong" action="{{ 'upload mix' }}" enctype="multipart/form-data" method="POST" target="iUpload">
-    			<input id="songFiles" type="file" name="songFiles" size="20" multiple>
-                <input id="btnUploadSong" type="button" value="Upload">
+        <section id="addSongBlock" class="add-song-block">
+        	<h1>Add songs</h1>
+            <form id="uploadSongForm" action="{% url 'mixes:upload_song' mix.pk %}" enctype="multipart/form-data" method="POST">
+                <div id="songUploader">There's a problem, this isn't going to work.</div>
             </form>
-            <br>
+            <a href="#" id="resetSongUploadQueue">Reset queue</a>
         </section>
     </div>
     
     
-    <section id="scnPublishMix">
-        <a href="#" id="aPublishMix"></a>
+    <section id="publishMixBlock" class="publish-mix-block">
+        <a href="#" id="publishMixLink">Publish</a>
     </section>
     
-    <section id="scnComments">
+    <section id="comments" class="comments">
     	<h1>Comment</h1>
         <div id="divAddComment">
         	<textarea id="txtAddComment" rows="3" cols="40"></textarea>

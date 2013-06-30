@@ -42,7 +42,7 @@ var App = {
 		}).render();
 
 		//this.mixView.model.save({username: "hello"}, {patch:true});
-		this.mixView.songs.collection.get(1).set({title : "New Title"});
+		//this.mixView.songs.collection.get(1).set({title : "New Title"});
 
 		$("#picUploader").pluploadQueue({
 			// General settings
