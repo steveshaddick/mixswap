@@ -28,6 +28,8 @@ def mix(request, pk):
     is_user_mix = mix.user == request.user
     picture_form = PictureForm()
 
+    print("MIX!")
+
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
 
         data = json.loads(request.body)
@@ -118,35 +120,24 @@ def upload_song(request, pk):
     return jsonResponse(True, response)
 
 
-def delete_song(request, pk, song_id, return_http=True):
-    try:
-        song = Song.objects.get(pk=song_id)
-
-    except song.DoesNotExist:
-        if (return_http):
-            return jsonResponse({'error': 'No song'})
-        else:
-            return False
-
-    if (song.song_file):
-        os.remove(str(song.song_file))
-    
-    song.delete()
-
-    return True
-
-
-def update_song(request, pk, song_id, return_http=True):
+def update_song(request, pk, song_id):
     try:
         mix = Mix.objects.get(pk=pk, is_published=False)
+        song = Song.objects.get(pk=song_id)
+    except (mix.DoesNotExist, song.DoesNotExist):
+        return jsonResponse({'error': 'No mix or song.'})
 
-    except mix.DoesNotExist:
-        if (return_http):
-            return jsonResponse({'error': 'No mix'})
-        else:
-            return False
+    if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
+        if (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'DELETE'):
+            if (song.song_file):
+                os.remove(str(song.song_file))
+            song.delete()
 
-    return True
+        elif (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'UPDATE'):
+            #stuff
+            return jsonResponse(True)
+
+    return jsonResponse(True)
 
     
 def upload_picture(request, pk):

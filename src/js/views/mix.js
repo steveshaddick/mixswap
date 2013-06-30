@@ -19,7 +19,7 @@ var MixView = Backbone.View.extend({
 	setUnpublished: function() {
 		if (!this.isPublished) return;
 
-		var me = this;
+		var that = this;
 		$('body').addClass('unpublished');
 
 		$('#mixTitle').editable({	
@@ -28,8 +28,24 @@ var MixView = Backbone.View.extend({
 			title: 'Enter title',
 			inputclass: 'mix-title'
 		}).on('save', function(e, params){
-			me.model.set('title', params.newValue);
+			that.model.set('title', params.newValue);
 		});
+
+		this.songs.$el.on('click', '.song-delete', function() {
+			$item = $(this).parent();
+			var songModel = that.songs.collection.get($item.attr('id').replace('song_', ''));
+
+			if (confirm("Are you sure you want to delete " + songModel.attributes.title + " by " + songModel.attributes.artist + "?")) {
+				songModel.destroy();
+			}
+		});
+
+		this.songs.$el.sortable({
+			update:function(event, ui) {
+				that.songs.reorderSongs();
+			}
+		});
+
 
 		$("#resetSongUploadQueue").click(function() {
 			var uploader = $('#songUploader').pluploadQueue();
@@ -96,6 +112,8 @@ var MixView = Backbone.View.extend({
 			return false;
 		});
 
+
+
 		this.options.isPublished = this.isPublished = false;
 	},
 
@@ -123,26 +141,28 @@ var MixView = Backbone.View.extend({
 
 var SongCollectionView = Backbone.View.extend({
 	
-	changed: [],
+	songViews: [],
 
 	initialize: function () {
 		var that = this;
 
 		this.listenTo(this.collection, "reset", this.renderReset);
 		this.listenTo(this.collection, "changeSongOrder", this.onChangeOrder);
+		this.listenTo(this.collection, "destroy", this.reorderSongs);
 
 		this.songViews = [];
 		this.collection.each(function(item) {
 			that.songViews.push(new SongView({
 				model: item,
-				id: "song_" + item.attributes.id
+				id: "song_" + item.attributes.id,
+				songCollectionView: that
 			}));
 		});
 
 	},
 
 	renderReset: function() {
-		console.log("collection reset");
+
 		var that = this;
 
 		this.$el.empty();
@@ -150,33 +170,34 @@ var SongCollectionView = Backbone.View.extend({
 			that.$el.append(item.render().$el);
 		});
 
-		this.$el.sortable({
-			update:function(event, ui) {
-				that.changed = [];
-				var $item;
-				var count = 1;
-				var songModel;
-				$(".song-item", that.$el).each(function() {
-					$item = $(this);
-					if ($item.attr('data-order') != count) {
-						songModel = that.collection.get($item.attr('id').replace('song_', ''));
-						songModel.set('songOrder', count);
-						that.changed.push(songModel);
-					}
-					count ++;
-				});
-
-				that.collection.trigger('changeSongOrder');
-			}
-		});
-
 		return this;
 	},
 
-	onChangeOrder: function() {
+	reorderSongs: function() {
+		var $item;
+		var count = 1;
+		var songModel;
+		var that = this;
 
-		console.log("change order");
+		$(".song-item", this.$el).each(function() {
+			$item = $(this);
+			if ($item.attr('data-order') != count) {
+				songModel = that.collection.get($item.attr('id').replace('song_', ''));
+				songModel.set('songOrder', count);
+			}
+			count ++;
+		});
+
+		this.collection.trigger('changeSongOrder');
+	},
+
+	onChangeOrder: function() {
 		this.collection.updateSongOrder();
+	},
+
+	removeView: function(view) {
+		var viewIndex = _(this.songViews).indexOf(view);
+		this.songViews.splice(viewIndex, 1);
 	}
 });
 
@@ -185,11 +206,11 @@ var SongView = Backbone.View.extend({
 	initialize: function() {
 		this.listenTo(this.model, "change:title", this.renderTitle);
 		this.listenTo(this.model, "change:songOrder", this.renderSongOrder);
+		this.listenTo(this.model, "destroy", this.onDestroy);
 
 	},
 
 	render: function() {
-		console.log("render songview");
 		var $item = $("#tmpSongItem").clone();
 
 		$item.attr('id', this.id).attr('data-order', this.model.songOrder);
@@ -203,13 +224,16 @@ var SongView = Backbone.View.extend({
 	},
 
 	renderTitle: function() {
-		console.log("render title");
 		$('.song-title', this.$el).html(this.model.attributes.title);
 	},
 
 	renderSongOrder: function() {
-		console.log("render song order");
 		$('.song-order', this.$el).html(this.model.attributes.songOrder);
+	},
+
+	onDestroy: function(model) {
+		this.remove();
+		this.options.songCollectionView.removeView(this);
 	}
 });
 

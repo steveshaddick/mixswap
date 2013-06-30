@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+
 from mutagen.easyid3 import EasyID3
 import os, re, time, datetime
 
