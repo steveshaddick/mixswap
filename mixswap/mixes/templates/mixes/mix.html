@@ -104,7 +104,7 @@
             songs: [
                 {% for mix_song in mix_songs.all %}
                     {% if not forloop.first %}, {% endif %}
-                    {id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: "{{ mix_song.song_order }}", isUserFav: {% if user in mix_song.favourites %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }
+                    {id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: {{ mix_song.song_order }}, isUserFav: {% if user in mix_song.favourites %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }
                 {% endfor %}
             ]
         });

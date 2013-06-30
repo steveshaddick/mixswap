@@ -107,9 +107,10 @@ def upload_song(request, pk):
             )
             mixSong.save()
 
-            response['file'] = str(song.song_file)
+            response['song_id'] = str(song.id)
             response['title'] = str(song.title)
             response['artist'] = str(song.artist)
+            response['song_order'] = str(song_order)
 
         else:
             return jsonResponse(False, {'error': form.errors})

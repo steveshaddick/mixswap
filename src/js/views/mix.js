@@ -57,7 +57,7 @@ var MixView = Backbone.View.extend({
 			return false;
 		});
 
-		$("#songUploader").pluploadQueue({
+		this.pluploadQueue = $("#songUploader").pluploadQueue({
 			// General settings
 			runtimes : 'html5,flash,silverlight',
 			url : $('#uploadSongForm').attr('action'),
@@ -84,9 +84,22 @@ var MixView = Backbone.View.extend({
 					console.log('[error] ', args);
 				},
 
-				UploadComplete: function(up) {
+				UploadComplete: function(up, args) {
 					// Called when the state of the queue is changed
-					console.log('[UploadComplete]', up);
+					//console.log('[UploadComplete]', up, args);
+				},
+
+				FileUploaded: function(up, file, response) {
+					// Called when the state of the queue is changed
+					//console.log('[File Uploaded]', response);
+					var data = JSON.parse(response.response);
+					song = new Song({
+						id: data.song_id,
+						artist: data.artist,
+						title: data.title,
+						songOrder: data.song_order
+					});
+					that.songs.collection.add(song);
 				}
 			}
 		});
@@ -149,16 +162,27 @@ var SongCollectionView = Backbone.View.extend({
 		this.listenTo(this.collection, "reset", this.renderReset);
 		this.listenTo(this.collection, "changeSongOrder", this.onChangeOrder);
 		this.listenTo(this.collection, "destroy", this.reorderSongs);
+		this.listenTo(this.collection, "add", this.addSong);
 
 		this.songViews = [];
 		this.collection.each(function(item) {
 			that.songViews.push(new SongView({
 				model: item,
-				id: "song_" + item.attributes.id,
 				songCollectionView: that
 			}));
 		});
 
+	},
+
+	addSong: function(model) {
+		var songView = new SongView({
+			model: model,
+			songCollectionView: this
+		});
+
+		this.songViews.push(songView);
+
+		this.$el.append(songView.render().$el);
 	},
 
 	renderReset: function() {
@@ -208,6 +232,7 @@ var SongView = Backbone.View.extend({
 		this.listenTo(this.model, "change:songOrder", this.renderSongOrder);
 		this.listenTo(this.model, "destroy", this.onDestroy);
 
+		this.id = "song_" + this.model.attributes.id;
 	},
 
 	render: function() {
