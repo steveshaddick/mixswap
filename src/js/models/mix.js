@@ -10,6 +10,7 @@ var Song = Backbone.Model.extend({
 	defaults: {
 		artist: 'Unknown',
 		title: 'Untitled',
+		songFile: '',
 		isUserFav: false,
 		totalFav: 0,
 		songOrder: 1

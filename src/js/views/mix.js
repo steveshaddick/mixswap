@@ -1,15 +1,19 @@
 var MixView = Backbone.View.extend({
 
 	isPublished: true,
+	isSorting: false,
 	
 	initialize: function () {
 		this.listenTo(this.model, "change:title", this.onChange);
+		this.listenTo(this.model, "change:pictureFile", this.renderPictureFile);
 
 		this.songs = new SongCollectionView({
 			collection: this.model.songs,
 			el: $(".song-list", this.el)[0]
 		});
 		this.songs.collection.trigger('reset');
+
+		this.renderPictureFile();
 	},
 
 	onChange: function(model, options) {
@@ -40,24 +44,38 @@ var MixView = Backbone.View.extend({
 			}
 		});
 
+		this.songs.$el.on('click', '.song-wrapper', function() {
+			if (that.isSorting) return;
+
+			$item = $(this).parent();
+			var songModel = that.songs.collection.get($item.attr('id').replace('song_', ''));
+			if (that.options.songClick) {
+				that.options.songClick(songModel);
+			}
+		});
+
+		$("#removeBG").click(function() {
+			that.model.set('pictureFile', '');
+			that.model.save(that.model.changed, {patch: true});
+		});
+
 		this.songs.$el.sortable({
+			start: function() {
+				that.isSorting = true;
+			},
+			stop: function() {
+				setTimeout(
+					function() {
+						that.isSorting = false;
+					},0);
+			},
 			update:function(event, ui) {
 				that.songs.reorderSongs();
 			}
 		});
 
-
-		$("#resetSongUploadQueue").click(function() {
-			var uploader = $('#songUploader').pluploadQueue();
-			uploader.splice();
-
-			$('#songUploader .plupload_buttons').css('display', '');
-			$('#songUploader .plupload_upload_status').css('display', '');
-
-			return false;
-		});
-
-		this.pluploadQueue = $("#songUploader").pluploadQueue({
+		//song uploader
+		$("#songUploader").pluploadQueue({
 			// General settings
 			runtimes : 'html5,flash,silverlight',
 			url : $('#uploadSongForm').attr('action'),
@@ -87,19 +105,30 @@ var MixView = Backbone.View.extend({
 				UploadComplete: function(up, args) {
 					// Called when the state of the queue is changed
 					//console.log('[UploadComplete]', up, args);
+					var uploader = $('#songUploader').pluploadQueue();
+					uploader.splice();
+
+					$('#songUploader .plupload_buttons').css('display', '');
+					$('#songUploader .plupload_upload_status').css('display', '');
 				},
 
 				FileUploaded: function(up, file, response) {
 					// Called when the state of the queue is changed
 					//console.log('[File Uploaded]', response);
 					var data = JSON.parse(response.response);
-					song = new Song({
-						id: data.song_id,
-						artist: data.artist,
-						title: data.title,
-						songOrder: data.song_order
-					});
-					that.songs.collection.add(song);
+
+					if (data.success) {
+						song = new Song({
+							id: data.song_id,
+							artist: data.artist,
+							title: data.title,
+							songOrder: data.song_order,
+							songFile: data.song_file
+						});
+						that.songs.collection.add(song);
+					} else {
+						alert("There was an error uploading: " + data.error);
+					}
 				}
 			}
 		});
@@ -114,6 +143,89 @@ var MixView = Backbone.View.extend({
 				uploader.bind('StateChanged', function() {
 					if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
 						$('#uploadSongForm')[0].submit();
+					}
+				});
+					
+				uploader.start();
+			} else {
+				alert('You must queue at least one file.');
+			}
+
+			return false;
+		});
+
+
+		//image uploader
+		$("#picUploader").pluploadQueue({
+			// General settings
+			runtimes : 'html5,flash,silverlight',
+			url : $('#uploadPictureForm').attr('action'),
+			file_data_name: 'picfile',
+			max_file_size : '10mb',
+			unique_names : true,
+			headers: {"X-CSRFToken": GLOBAL.csrfToken}, 
+			dragdrop:false,
+			drop_element: "bgDropper",
+
+			// Resize images on clientside if we can
+			resize : {width : 2000, height : 2000, quality : 70},
+			rename: true,
+
+			// Specify what files to browse for
+			filters : [
+				{title : "Image files", extensions : "jpg,gif,png"}
+			],
+
+			// Flash settings
+			flash_swf_url : '/static/js/plupload/plupload.flash.swf',
+
+			// Silverlight settings
+			silverlight_xap_url : '/static/js/plupload/plupload.silverlight.xap',
+
+			init : {
+				Error: function(up, args) {
+					// Called when a error has occured
+					console.log('[error] ', args);
+				},
+
+				FilesAdded: function() {
+					$('#picUploader').pluploadQueue().start();
+				},
+
+				UploadComplete: function(up, args) {
+					// Called when the state of the queue is changed
+					//console.log('[UploadComplete]', up, args);
+					var uploader = $('#picUploader').pluploadQueue();
+					uploader.splice();
+
+					$('#picUploader .plupload_buttons').css('display', '');
+					$('#picUploader .plupload_upload_status').css('display', '');
+				},
+
+				FileUploaded: function(up, file, response) {
+					// Called when the state of the queue is changed
+					var data = JSON.parse(response.response);
+
+					if (data.success) {
+						that.model.set('pictureFile', data.file);
+					} else {
+						alert("There was an error uploading: " + data.error);
+					}
+					
+				}
+			}
+		});
+
+		// Client side form validation
+		$('#uploadPictureForm').submit(function(e) {
+			var uploader = $('#picUploader').pluploadQueue();
+
+			// Files in queue upload them first
+			if (uploader.files.length > 0) {
+				// When all files are uploaded submit form
+				uploader.bind('StateChanged', function() {
+					if (uploader.files.length === (uploader.total.uploaded + uploader.total.failed)) {
+						$('#uploadPictureForm')[0].submit();
 					}
 				});
 					
@@ -142,12 +254,19 @@ var MixView = Backbone.View.extend({
 			if (!this.options.isPublished){
 				this.setUnpublished();
 			}
-
 		}
 
-		
-
 		return this;
+	},
+
+	renderPictureFile: function() {
+		if (this.model.attributes.pictureFile != '') {
+			$("#mainWrapper").css('background-image', 'url(' + this.model.attributes.pictureFile + ')');
+			$("#removeBG").css('display', '');
+		} else {
+			$("#mainWrapper").css('background-image', '');
+			$("#removeBG").css('display', 'none');
+		}
 	}
 });
 

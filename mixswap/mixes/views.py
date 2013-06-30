@@ -28,16 +28,20 @@ def mix(request, pk):
     is_user_mix = mix.user == request.user
     picture_form = PictureForm()
 
-    print("MIX!")
-
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
 
         data = json.loads(request.body)
         response = {}
         if request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'PATCH':
-            mix.title = data['title']
-            mix.save()
-            response['title'] = data['title']
+            if ('title' in data):
+                mix.title = data['title']
+                mix.save()
+
+                response['title'] = data['title']
+
+            if ('pictureFile' in data):
+                delete_picture(request, pk, False)
+            
             response['method'] = 'patch'
 
         return jsonResponse(True, response)
@@ -56,11 +60,15 @@ def mix(request, pk):
         )
 
 
+@login_required
 def update_song_order(request, pk):
     try:
         mix = Mix.objects.get(pk=pk, is_published=False)
     except mix.DoesNotExist:
-        return jsonResponse({'error': 'No mix'})
+        return jsonResponse(False, {'error': 'No mix.'})
+
+    if (mix.user != request.user):
+        return jsonResponse(False, {'error': 'Bad user.'})
 
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
 
@@ -77,13 +85,17 @@ def update_song_order(request, pk):
         return jsonResponse(False)
 
 
+@login_required
 def upload_song(request, pk):
     response = {}
 
     try:
         mix = Mix.objects.get(pk=pk, is_published=False)
     except mix.DoesNotExist:
-        return jsonResponse({'error': 'No mix'})
+        return jsonResponse(False, {'error': 'No mix.'})
+
+    if (mix.user != request.user):
+        return jsonResponse(False, {'error': 'Bad user.'})
 
     if request.method == 'POST':
         form = SongForm(request.POST, request.FILES)
@@ -111,6 +123,7 @@ def upload_song(request, pk):
             response['title'] = str(song.title)
             response['artist'] = str(song.artist)
             response['song_order'] = str(song_order)
+            response['song_file'] = str(song.song_file.url)
 
         else:
             return jsonResponse(False, {'error': form.errors})
@@ -121,17 +134,21 @@ def upload_song(request, pk):
     return jsonResponse(True, response)
 
 
+@login_required
 def update_song(request, pk, song_id):
     try:
         mix = Mix.objects.get(pk=pk, is_published=False)
         song = Song.objects.get(pk=song_id)
     except (mix.DoesNotExist, song.DoesNotExist):
-        return jsonResponse({'error': 'No mix or song.'})
+        return jsonResponse(False, {'error': 'No mix or song.'})
+
+    if (mix.user != request.user):
+        return jsonResponse(False, {'error': 'Bad user.'})
 
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
         if (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'DELETE'):
             if (song.song_file):
-                os.remove(str(song.song_file))
+                os.remove(settings.MEDIA_ROOT + str(song.song_file))
             song.delete()
 
         elif (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'UPDATE'):
@@ -140,53 +157,55 @@ def update_song(request, pk, song_id):
 
     return jsonResponse(True)
 
-    
+
+@login_required
 def upload_picture(request, pk):
-    response_dict = {}
+    response = {}
 
     try:
         mix = Mix.objects.get(pk=pk, is_published=False)
     except mix.DoesNotExist:
-        return jsonResponse({'error': 'No mix'})
+        return jsonResponse(False, {'error': 'No mix.'})
+
+    if (mix.user != request.user):
+        return jsonResponse(False, {'error': 'Bad user.'})
 
     if request.method == 'POST':
         form = PictureForm(request.POST, request.FILES)
 
         if form.is_valid():
-            if not delete_picture(request, pk, False):
-                response_dict['success'] = False
-                response_dict['error'] = 'Delete error.'
-                return HttpResponse(json.dumps(response_dict), mimetype='application/json')
+            delete_picture(request, pk, False)
 
             mix.picture_file = request.FILES['picfile']
             mix.save()
 
-            response_dict['file'] = str(mix.picture_file)
-            response_dict['success'] = True
+            response['file'] = str(mix.picture_file.url)
         else:
-            response_dict['success'] = False
-            response_dict['error'] = form.errors
+            return jsonResponse(False, {'error': form.errors})
 
     else:
-        response_dict['success'] = False
-        response_dict['error'] = 'No Post.'
+        return jsonResponse(False, {'error': 'No post.'})
 
-    return HttpResponse(json.dumps(response_dict), mimetype='application/json')
+    return jsonResponse(True, response)
 
 
+@login_required
 def delete_picture(request, pk, return_http=True):
     try:
         mix = Mix.objects.get(pk=pk, is_published=False)
 
     except mix.DoesNotExist:
         if (return_http):
-            return jsonResponse({'error': 'No mix'})
+            return jsonResponse(False, {'error': 'No mix'})
         else:
             return False
 
-    if (mix.picture_file):
+    if (mix.user != request.user):
+        return jsonResponse(False, {'error': 'Bad user.'})
+
+    if (mix.picture_file != ''):
+        os.remove(settings.MEDIA_ROOT + str(mix.picture_file))
         mix.picture_file = ''
         mix.save()
-        os.remove(str(mix.picture_file))
 
     return True

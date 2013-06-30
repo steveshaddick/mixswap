@@ -84,11 +84,7 @@ input:valid {
 
 
 
-#contentWrapper {
-	width: 400px;
-	margin:0 auto;
-	font-family: helvetica, arial, sans-serif;
-}
+
 
 header {
 	font-family: helvetica, arial, sans-serif;
@@ -418,14 +414,6 @@ header h2 {
 #scnAudioPlayer{
 	padding-top:20px;
 
-}
-
-#scnChangeBG{
-	background-color: rgba(255, 255, 255, 0.5);
-    bottom: 0;
-    left: 0;
-    position: fixed ;
-	padding:5px;
 }
 
 #scnComments {

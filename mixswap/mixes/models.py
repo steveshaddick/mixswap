@@ -7,12 +7,12 @@ import os, re, time, datetime
 
 
 def get_photo_upload_path(instance, filename):
-    return os.path.join(settings.MEDIA_ROOT, "user_%d" % instance.user.id, "photos", "{0}_{1}{2}".format(instance.user.id, int(time.time()), os.path.splitext(filename)[1]))
+    return os.path.join("user_%d" % instance.user.id, "photos", "{0}_{1}{2}".format(instance.user.id, int(time.time()), os.path.splitext(filename)[1]))
 
 
 def get_audio_upload_path(instance, filename):
     pattern = re.compile('[^a-zA-z0-9.]+')
-    return os.path.join(settings.MEDIA_ROOT, "user_%d" % instance.user.id, "audio", "mix_%d" % instance.primary_mix.id, pattern.sub('', filename))
+    return os.path.join("user_%d" % instance.user.id, "audio", "mix_%d" % instance.primary_mix.id, pattern.sub('', filename))
 
 
 class Mix(models.Model):
