@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect, HttpResponse, Http404
 from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
@@ -26,10 +26,12 @@ def jsonResponse(success, response={}):
 def mix(request, pk):
     mix = get_object_or_404(Mix, pk=pk)
     is_user_mix = mix.user == request.user
-    picture_form = PictureForm()
+    is_published = mix.is_published
+
+    if (not is_published) and (not is_user_mix):
+        raise Http404
 
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
-
         data = json.loads(request.body)
         response = {}
         if request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'PATCH':
@@ -51,6 +53,7 @@ def mix(request, pk):
         return jsonResponse(True, response)
 
     else:
+        picture_form = PictureForm()
         return render(
             request,
             'mixes/mix.html',

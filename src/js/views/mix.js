@@ -2,6 +2,7 @@ var MixView = Backbone.View.extend({
 
 	isPublished: true,
 	isSorting: false,
+	currentPlayingSong: false,
 	
 	initialize: function () {
 		this.listenTo(this.model, "change:title", this.onChange);
@@ -12,26 +13,34 @@ var MixView = Backbone.View.extend({
 			collection: this.model.songs,
 			el: $(".song-list", this.el)[0]
 		});
-		this.songs.collection.trigger('reset');
+	
+	},
 
-		this.renderPictureFile();
+	playSong: function(song, autoPlay) {
+		if (!song) return;
 
-		var that = this;
-		this.songs.$el.on('click', '.song-wrapper', function() {
-			if (that.isSorting) return;
+		if (this.currentPlayingSong) {
 
-			$item = $(this).parent();
-			var songModel = that.songs.collection.get($item.attr('id').replace('song_', ''));
-			if (that.options.songClick) {
-				that.options.songClick(songModel);
-			}
-		});
+		}
+		this.currentPlayingSong = song;
+		EventDispatcher.dispatchEvent('songPlay', {song: this.currentPlayingSong, autoPlay: autoPlay} );
+	},
 
-		if (this.options.isUserMix) {
-			$("#unpublishMixLink").on('click', function() {
-				that.model.set('isPublished', false);
-				that.model.save(that.model.changed, {patch: true});
-			});
+	songStopHandler: function() {
+		console.log("song stopped", this);
+		this.currentPlayingSong = false;
+	},
+
+	songEndedHandler: function() {
+		this.playNextSong();
+	},
+
+	playNextSong: function() {
+		if (!this.currentPlayingSong) return;
+
+		var nextSong = this.songs.collection.findWhere({songOrder: this.currentPlayingSong.attributes.songOrder + 1});
+		if (nextSong) {
+			this.playSong(nextSong);
 		}
 	},
 
@@ -283,11 +292,32 @@ var MixView = Backbone.View.extend({
 		this.options.isPublished = this.isPublished = false;
 	},
 
-	render: function() {
+	renderInit: function() {
 		console.log("rendering mix");
 
 		$("#mixTitle").html(this.model.attributes.title);
 		$("#mixUsername").html('by ' + this.model.attributes.username);
+
+		var that = this;
+		this.songs.$el.on('click', '.song-wrapper', function() {
+			if (that.isSorting) return;
+
+			$item = $(this).parent();
+			var song = that.songs.collection.get($item.attr('id').replace('song_', ''));
+			if (this.currentPlayingSong != song) {
+				that.playSong(song);
+			}
+		});
+
+		if (this.options.isUserMix) {
+			$("#unpublishMixLink").on('click', function() {
+				that.model.set('isPublished', false);
+				that.model.save(that.model.changed, {patch: true});
+			});
+		}
+
+		//EventDispatcher.addEventListener('songStop', function(){ that.songStopHandler(); });
+		EventDispatcher.addEventListener('songEnded', function(){ that.songEndedHandler(); });
 
 		if (this.options.isUserMix) {
 			$('body').addClass('admin');
@@ -296,6 +326,14 @@ var MixView = Backbone.View.extend({
 				this.setUnpublished();
 			}
 		}
+
+		if (this.options.isPublished) {
+			var song = this.songs.collection.findWhere({songOrder: 1});
+			this.playSong(song, false);
+		}
+
+		this.renderPictureFile();
+		this.songs.collection.trigger('reset');
 
 		return this;
 	},

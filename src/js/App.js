@@ -13,6 +13,7 @@ var AudioPlayer = {
 	$container: false,
 	isReady: false,
 	readySong: false,
+	readyPlay: false,
 
 	init: function() {
 		var that = this;
@@ -24,17 +25,29 @@ var AudioPlayer = {
 			ready: function() {
 				that.isReady = true;
 				if (that.readySong) {
-					AudioPlayer.play(that.readySong);
+					AudioPlayer.play(that.readySong, that.readyPlay);
 				}
+			},
+			ended: function() {
+				EventDispatcher.dispatchEvent('songEnded');
+			},
+			pause: function() {
+				EventDispatcher.dispatchEvent('songStop');
 			},
 			preload: "auto",
 			swfPath: "/js"
 		});
+
+		EventDispatcher.addEventListener('songPlay', function(obj){ that.play(obj.song, obj.autoPlay); });
 	},
 
-	play: function(song) {
+	play: function(song, autoPlay) {
+		if (typeof autoPlay == "undefined") {
+			autoPlay = true;
+		}
 		if (!this.isReady) {
 			this.readySong = song;
+			this.readyPlay = autoPlay;
 			return;
 		}
 		var file = song.attributes.songFile;
@@ -43,7 +56,10 @@ var AudioPlayer = {
 		var mediaObj = {};
 		mediaObj[ext] = file;
 
-		this.$audioPlayer.jPlayer("setMedia", mediaObj).jPlayer("play");
+		this.$audioPlayer.jPlayer("setMedia", mediaObj);
+		if (autoPlay) {
+			this.$audioPlayer.jPlayer("play");
+		}
 
 		$('.jp-title', this.$container).html(song.attributes.title);
 
@@ -83,11 +99,11 @@ var App = {
 			id: data.id,
 			isUserMix: data.isUserMix,
 			isPublished: data.isPublished,
-			pictureFile: data.pictureFile,
-			songClick: function(song){ AudioPlayer.play(song); }
-		}).render();
+			pictureFile: data.pictureFile
+		});
 
 		AudioPlayer.init();
+		this.mixView.renderInit();
 
 	}
 
