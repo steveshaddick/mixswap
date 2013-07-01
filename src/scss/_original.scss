@@ -249,15 +249,7 @@ header h2 {
 	vertical-align: top;
 }
 
-.divFavourite {
-	display: inline-block;
-    margin-left: -24px;
-	vertical-align: top;
-}
-.favCount {
-	font-size:10px;
-	color:#999;
-}
+
 
 .divSong{
 	display: inline-block;
@@ -416,41 +408,4 @@ header h2 {
 
 }
 
-#scnComments {
-	padding-top:10px;
-	
-}
 
-#scnComments h1{
-	background-color: rgba(255, 255, 255, 0.85);
-	display:inline;
-	padding:0 5px;
-	color: #666666;
-	
-	-webkit-border-top-left-radius: 5px;
-	-webkit-border-top-right-radius: 5px;
-	-moz-border-radius-topleft: 5px;
-	-moz-border-radius-topright: 5px;
-}
-
-#divAddComment {
-	background-color: rgba(255, 255, 255, 0.75);
-}
-
-#divCommentsList {
-	background-color: rgba(255, 255, 255, 0.75);
-	
-	-webkit-border-bottom-right-radius: 10px;
-	-moz-border-radius-bottomright: 10px;
-}
-.commentItem {
-	padding:5px;
-}
-.commentUserName {
-	font-weight:bold;
-}
-.commentTime {
-	font-size:10px;
-}
-.commentText {
-}

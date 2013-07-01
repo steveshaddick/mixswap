@@ -309,6 +309,13 @@ var MixView = Backbone.View.extend({
 			}
 		});
 
+		this.songs.$el.on('change', '.favourite-checkbox', function() {
+			$item = $(this).parent();
+			var song = that.songs.collection.get($item.attr('id').replace('song_', ''));
+			song.set('isUserFav', this.checked);
+			song.save(song.changed, {patch: true});
+		});
+
 		if (this.options.isUserMix) {
 			$("#unpublishMixLink").on('click', function() {
 				that.model.set('isPublished', false);
@@ -436,6 +443,7 @@ var SongView = Backbone.View.extend({
 	initialize: function() {
 		this.listenTo(this.model, "change:title", this.renderTitle);
 		this.listenTo(this.model, "change:songOrder", this.renderSongOrder);
+		this.listenTo(this.model, "change:totalFav", this.renderTotalFav);
 		this.listenTo(this.model, "destroy", this.onDestroy);
 
 		this.id = "song_" + this.model.attributes.id;
@@ -448,6 +456,8 @@ var SongView = Backbone.View.extend({
 		$('.song-title', $item).html(this.model.attributes.title);
 		$('.song-artist', $item).html(this.model.attributes.artist);
 		$('.song-order', $item).html(this.model.attributes.songOrder);
+		$('.total-favourite', $item).html(this.model.attributes.totalFav + " favs");
+		$('.favourite-checkbox', $item)[0].checked = this.model.attributes.isUserFav;
 
 		this.$el = $item;
 
@@ -460,6 +470,10 @@ var SongView = Backbone.View.extend({
 
 	renderSongOrder: function() {
 		$('.song-order', this.$el).html(this.model.attributes.songOrder);
+	},
+
+	renderTotalFav: function() {
+		$('.total-favourite', this.$el).html(this.model.attributes.totalFav + " favs");
 	},
 
 	onDestroy: function(model) {

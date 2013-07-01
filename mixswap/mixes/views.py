@@ -144,25 +144,37 @@ def upload_song(request, pk):
 @login_required
 def update_song(request, pk, song_id):
     try:
-        mix = Mix.objects.get(pk=pk, is_published=False)
+        mix = Mix.objects.get(pk=pk)
         song = Song.objects.get(pk=song_id)
     except (mix.DoesNotExist, song.DoesNotExist):
         return jsonResponse(False, {'error': 'No mix or song.'})
 
-    if (mix.user != request.user):
-        return jsonResponse(False, {'error': 'Bad user.'})
+    response = {}
 
     if ('HTTP_X_HTTP_METHOD_OVERRIDE' in request.META):
         if (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'DELETE'):
+            if (mix.user != request.user):
+                return jsonResponse(False, {'error': 'Bad user.'})
+            
             if (song.song_file):
                 os.remove(settings.MEDIA_ROOT + str(song.song_file))
             song.delete()
 
-        elif (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'UPDATE'):
-            #stuff
-            return jsonResponse(True)
+        elif (request.META['HTTP_X_HTTP_METHOD_OVERRIDE'] == 'PATCH'):
+            data = json.loads(request.body)
+            if ('isUserFav' in data):
+                mix_song = MixSong.objects.get(mix=mix, song=song)
+                if (data['isUserFav']):
+                    mix_song.favourites.add(request.user)
+                else:
+                    mix_song.favourites.remove(request.user)
+                
+                mix_song.save()
+                response['total_fav'] = mix_song.favourites.count()
 
-    return jsonResponse(True)
+            return jsonResponse(True, response)
+
+    return jsonResponse(True, {'hey': request.META['HTTP_X_HTTP_METHOD_OVERRIDE']})
 
 
 @login_required

@@ -46,6 +46,7 @@
 
 	.song-item {
 		clear:both;
+		position:relative;
 	}
 
 	.song-order {
@@ -55,7 +56,7 @@
 	}
 	.song-wrapper {
 		float:left;    
-		width: 370px;    
+		width: 350px;    
 		margin-bottom: 10px;
 	}
 	.song-title {
@@ -65,12 +66,63 @@
 		font-size: 12px;
 		font-weight: bold;
 	}
+
+	.favourite-checkbox {
+		position:absolute;
+		left: -24px;
+		top:0;
+	}
+	.total-favourite {
+		font-size:10px;
+		color:#999;
+		position:absolute;
+		right:0;
+		width:40px;
+	}
 }
 
 .song-delete,
 .publish-mix-block {
 	display:none;
 }
+
+.comments-block {
+	padding-top:10px;
+
+	h1{
+		background-color: rgba(255, 255, 255, 0.85);
+		display:inline;
+		padding:0 5px;
+		color: #666666;
+		font-size:16px;
+		
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	}
+
+	.add-comment-block {
+		background-color: rgba(255, 255, 255, 0.75);
+	}
+
+	.comments-list {
+		background-color: rgba(255, 255, 255, 0.75);
+		border-bottom-right-radius: 10px;
+	}
+
+	.comment-item {
+		padding:5px;
+		.username {
+			font-weight:bold;
+		}
+		.time {
+			font-size:10px;
+		}
+		.text {
+		}
+	}
+	
+}
+
 
 .add-song-block {
 	display:none;
@@ -155,7 +207,7 @@
 		display:none;
 	}
 
-	.comments {
+	.comments-block {
 		display:none;
 	}
 

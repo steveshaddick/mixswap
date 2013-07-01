@@ -75,13 +75,13 @@
         <a href="javascript:;" id="unpublishMixLink" class="unpublish-mix-link">Unpublish</a>
     </section>
     
-    <section id="comments" class="comments">
+    <section id="comments" class="comments-block">
     	<h1>Comment</h1>
-        <div id="divAddComment">
+        <div class="add-comment-block">
         	<textarea id="txtAddComment" rows="3" cols="40"></textarea>
             <button id="btnAddComment">Add</button>
         </div>
-        <div id="divCommentsList"></div>
+        <div id="commentsList" class="comments-list"></div>
     </section>
     
 </div>
@@ -100,17 +100,17 @@
 <section id="templates" style="display:none;">
 	
     <li id="tmpSongItem" class="song-item">        
-        <div class="favouriteWrapper"><input id="chkFavourite" name="chkFavourite" class="favourite" title="Favourite Track" type="checkbox" /></div>
+        <input id="chkFavourite" name="chkFavourite" class="favourite-checkbox" title="Favourite Track" type="checkbox" />
         <span class="song-order"></span>
         <div class="song-wrapper"><span class="song-title"></span><br><span class="song-artist"></span></div>
-        <span class="fav-count"></span>
+        <div class="total-favourite"></div>
         <a class="song-delete" href="javascript:;">x</a>
     </li>
     
-    <article id="refCommentItem" class="commentItem">
-    	<span class="commentUserName"></span> <time class="commentTime" datetime=""></time><br>
-        <span class="commentText"></span>
-    </article>
+    <div id="tmpCommentItem" class="comment-item">
+    	<span class="username"></span> <time class="time" datetime=""></time><br>
+        <span class="text"></span>
+    </div>
     
    <iframe id="iUpload" name="iUpload" src="#" style="display:none;visibility:hidden;width:0;height:0;"></iframe> 
 
@@ -131,13 +131,11 @@
             songs: [
                 {% for mix_song in mix_songs.all %}
                     {% if not forloop.first %}, {% endif %}
-                    { id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: {{ mix_song.song_order }}, songFile: "{{ mix_song.song.song_file.url }}", isUserFav: {% if user in mix_song.favourites %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }
+                    { id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: {{ mix_song.song_order }}, songFile: "{{ mix_song.song.song_file.url }}", isUserFav: {% if user in mix_song.favourites.all %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }
                 {% endfor %}
             ]
         });
     });
-
-    
 
     {% for comment in mix.comment_set.all %}
        // mix.addComment("{{ comment.user.first_name }}", "{{ comment.date }}", "{{ comment.text|linebreaks }}");
