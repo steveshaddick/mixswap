@@ -4,9 +4,9 @@ from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 
-import os, json
+import os, json, datetime
 
-from mixes.models import Mix, Song, MixSong
+from mixes.models import Mix, Song, MixSong, Comment
 from mixes.forms import PictureForm, SongForm
 
 
@@ -228,3 +228,49 @@ def delete_picture(request, pk, return_http=True):
         mix.save()
 
     return True
+
+
+@login_required
+def add_comment(request, pk):
+    try:
+        mix = Mix.objects.get(pk=pk)
+
+    except mix.DoesNotExist:
+        return jsonResponse(False, {'error': 'No mix'})
+
+    data = json.loads(request.body)
+    comment = Comment(
+        user=request.user,
+        mix=mix,
+        text=data['text'],
+        date=datetime.datetime.now()
+    )
+    comment.save()
+
+    return jsonResponse(True)
+
+
+@login_required
+def get_comments(request, pk):
+    try:
+        mix = Mix.objects.get(pk=pk)
+
+    except mix.DoesNotExist:
+        return jsonResponse(False, {'error': 'No mix'})
+
+    comments_set = mix.comment_set.all()
+    comments = []
+    for comment_item in comments_set:
+        comment = {
+            'date': str(comment_item.date),
+            'username': comment_item.user.first_name,
+            'text': comment_item.text.replace('\n', '<br>').replace('\r', ''),
+            'mixId': mix.id
+        }
+        comments.append(comment)
+
+    response = {
+        'comments': comments
+    }
+
+    return jsonResponse(True, response)

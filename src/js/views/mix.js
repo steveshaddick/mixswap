@@ -13,6 +13,11 @@ var MixView = Backbone.View.extend({
 			collection: this.model.songs,
 			el: $(".song-list", this.el)[0]
 		});
+
+		this.comments = new CommentCollectionView({
+			collection: this.model.comments,
+			el: $("#commentsList")[0]
+		});
 	
 	},
 
@@ -323,6 +328,24 @@ var MixView = Backbone.View.extend({
 			});
 		}
 
+		$("#btnAddComment").on('click', function() {
+			var text = $("#txtAddComment").val().trim();
+			if (text == '') return;
+
+			var now = new Date();
+			var comment = new Comment({
+				'username': that.model.get('username'),
+				'date': now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
+				'text': text,
+				'mixId': that.model.get('id')
+			});
+			comment.save();
+			that.comments.collection.add(comment);
+			$("#txtAddComment").val('');
+		});
+
+
+
 		//EventDispatcher.addEventListener('songStop', function(){ that.songStopHandler(); });
 		EventDispatcher.addEventListener('songEnded', function(){ that.songEndedHandler(); });
 
@@ -482,9 +505,52 @@ var SongView = Backbone.View.extend({
 	}
 });
 
+var CommentCollectionView = Backbone.View.extend({
+
+	initialize: function () {
+		var that = this;
+
+		this.listenTo(this.collection, "add", this.addComment);
+		//this.listenTo(this.collection, "sync", this.renderInitial);
+
+	},
+
+	addComment: function(model) {
+		var commentView = new CommentView({
+			model: model
+		});
+		commentView.render();
+		this.$el.prepend(commentView.$el);
+	},
+
+	renderInitial: function() {
+		var that = this;
+		this.collection.each(function(item) {
+			var commentView = new CommentView({
+				model: item
+			});
+			commentView.render();
+			that.$el.append(commentView.$el);
+		});
+	}
+});
+
 
 var CommentView = Backbone.View.extend({
+	initialize: function () {
+		this.render();
+	},
+
 	render: function() {
-		
+		var $item = $("#tmpCommentItem").clone();
+
+		$item.attr('id', '');
+		$('.username', $item).html(this.model.attributes.username);
+		$('.date', $item).html(this.model.attributes.date);
+		$('.text', $item).html(this.model.attributes.text);
+
+		this.$el = $item;
+
+		return this;
 	}
 });

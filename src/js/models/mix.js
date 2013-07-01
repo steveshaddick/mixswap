@@ -61,6 +61,10 @@ var Mix = Backbone.Model.extend({
 	initialize: function() {
 		this.songs = new Songs(this.attributes.songs);
 		this.songs.url = this.url() + 'update_song_order/';
+
+		this.comments = new Comments();
+		this.comments.url = this.url() + 'comments/';
+		this.comments.fetch();
     }
 });
 
@@ -81,7 +85,6 @@ var Comment = Backbone.Model.extend({
 	},
 
 	initialize: function() {
-		//console.log("SONG", this.attributes);
 		this.urlRoot = '/mix/' + this.attributes.mixId + '/comment/';
 		//this.listenTo(this, 'sync', this.onSync);
     }
@@ -90,10 +93,14 @@ var Comment = Backbone.Model.extend({
 
 var Comments = Backbone.Collection.extend({
 	model:Comment,
-	url: '',
+	url: '/comments',
 
 	comparator: function( collection ){
 		return( collection.get( 'date' ) );
+	},
+
+	parse: function(response) {
+		return response.comments;
 	}
 
 });

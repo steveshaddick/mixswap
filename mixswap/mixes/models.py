@@ -73,7 +73,7 @@ class MixSong(models.Model):
 class Comment(models.Model):
     user = models.ForeignKey(User)
     mix = models.ForeignKey(Mix)
-    date = models.DateField()
+    date = models.DateTimeField()
     text = models.TextField()
 
     def __unicode__(self):
