@@ -6,6 +6,7 @@ var MixView = Backbone.View.extend({
 	initialize: function () {
 		this.listenTo(this.model, "change:title", this.onChange);
 		this.listenTo(this.model, "change:pictureFile", this.renderPictureFile);
+		this.listenTo(this.model, "change:isPublished", this.renderPublished);
 
 		this.songs = new SongCollectionView({
 			collection: this.model.songs,
@@ -14,10 +15,55 @@ var MixView = Backbone.View.extend({
 		this.songs.collection.trigger('reset');
 
 		this.renderPictureFile();
+
+		var that = this;
+		this.songs.$el.on('click', '.song-wrapper', function() {
+			if (that.isSorting) return;
+
+			$item = $(this).parent();
+			var songModel = that.songs.collection.get($item.attr('id').replace('song_', ''));
+			if (that.options.songClick) {
+				that.options.songClick(songModel);
+			}
+		});
+
+		if (this.options.isUserMix) {
+			$("#unpublishMixLink").on('click', function() {
+				that.model.set('isPublished', false);
+				that.model.save(that.model.changed, {patch: true});
+			});
+		}
 	},
 
 	onChange: function(model, options) {
 		this.model.save(this.model.changed, {patch: true});
+	},
+
+	setPublished: function() {
+		if (this.isPublished) return;
+
+		var that = this;
+
+		$('body').removeClass('unpublished');
+
+		$('#mixTitle').editable('destroy').off('save');
+		this.songs.$el.off('click', '.song-delete');
+
+		$("#removeBG").off('click');
+		$("#publishMixLink").off('click');
+
+		this.songs.$el.sortable('destroy');
+
+		$("#songUploader").pluploadQueue().destroy();
+		$("#songUploader").unbind();
+		$('#uploadSongForm').unbind();
+
+		$("#picUploader").pluploadQueue().destroy();
+		$("#picUploader").unbind();
+		$('#uploadPictureForm').unbind();
+
+		this.options.isPublished = this.isPublished = true;
+
 	},
 
 	setUnpublished: function() {
@@ -44,18 +90,13 @@ var MixView = Backbone.View.extend({
 			}
 		});
 
-		this.songs.$el.on('click', '.song-wrapper', function() {
-			if (that.isSorting) return;
-
-			$item = $(this).parent();
-			var songModel = that.songs.collection.get($item.attr('id').replace('song_', ''));
-			if (that.options.songClick) {
-				that.options.songClick(songModel);
-			}
+		$("#removeBG").on('click', function() {
+			that.model.set('pictureFile', '');
+			that.model.save(that.model.changed, {patch: true});
 		});
 
-		$("#removeBG").click(function() {
-			that.model.set('pictureFile', '');
+		$("#publishMixLink").on('click', function() {
+			that.model.set('isPublished', true);
 			that.model.save(that.model.changed, {patch: true});
 		});
 
@@ -266,6 +307,14 @@ var MixView = Backbone.View.extend({
 		} else {
 			$("#mainWrapper").css('background-image', '');
 			$("#removeBG").css('display', 'none');
+		}
+	},
+
+	renderPublished: function() {
+		if (this.model.attributes.isPublished) {
+			this.setPublished();
+		} else {
+			this.setUnpublished();
 		}
 	}
 });

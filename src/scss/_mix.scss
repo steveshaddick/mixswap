@@ -8,6 +8,7 @@
 }
 
 #bgDropper {
+	display:none;
 	position:fixed;
 	top:0;
 	left:0;
@@ -17,7 +18,7 @@
 }
 
 #contentWrapper {
-	width: 400px;
+	width: 420px;
 	margin:0 auto;
 	font-family: helvetica, arial, sans-serif;
 	position:relative;
@@ -25,7 +26,8 @@
 }
 
 .song-list {
-	
+
+	background-color: rgba(255, 255, 255, 0.75);
 	padding:0;
 	list-style-type:none;
 
@@ -53,7 +55,7 @@
 	}
 	.song-wrapper {
 		float:left;    
-		width: 350px;    
+		width: 370px;    
 		margin-bottom: 10px;
 	}
 	.song-title {
@@ -65,8 +67,10 @@
 	}
 }
 
-
-/** Mix admin **/
+.song-delete,
+.publish-mix-block {
+	display:none;
+}
 
 .add-song-block {
 	display:none;
@@ -98,7 +102,6 @@
 	}
 }
 
-
 .change-bg-block {
 
 	background-color: rgba(255, 255, 255, 0.5);
@@ -106,6 +109,7 @@
     left: 0;
     position: fixed ;
 	padding:5px;
+	display:none;
 
 	/** uploader overrides **/
 	.plupload_scroll .plupload_filelist {
@@ -128,8 +132,24 @@
 	}
 }
 
+
+/** Mix admin **/
+
+.admin {
+	.publish-mix-block {
+		display:block;
+	}
+
+	
+
+	.publish-mix-link {
+		display:none;
+	}
+}
+
 .unpublished {
 
+	.unpublish-mix-link,
 	.favourite,
 	.fav-count {
 		display:none;
@@ -139,6 +159,13 @@
 		display:none;
 	}
 
+	.song-delete,
+	.publish-mix-link {
+		display: inline;
+	}
+
+	#bgDropper,
+	.change-bg-block ,
 	.add-song-block,
 	.publish-mix-block {
 		display:block;

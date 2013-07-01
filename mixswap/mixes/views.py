@@ -41,6 +41,10 @@ def mix(request, pk):
 
             if ('pictureFile' in data):
                 delete_picture(request, pk, False)
+
+            if ('isPublished' in data):
+                mix.is_published = data['isPublished']
+                mix.save()
             
             response['method'] = 'patch'
 
