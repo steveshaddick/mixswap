@@ -46,6 +46,8 @@ def mix(request, pk):
 
             if ('isPublished' in data):
                 mix.is_published = data['isPublished']
+                if (mix.is_published and mix.date_published is None):
+                    mix.date_published = datetime.date.now()
                 mix.save()
             
             response['method'] = 'patch'

@@ -20,7 +20,7 @@ class Mix(models.Model):
     title = models.CharField(max_length=50)
     picture_file = models.ImageField(upload_to=get_photo_upload_path, blank=True, null=True)
     is_published = models.BooleanField()
-    date_published = models.DateField(blank=True, null=True)
+    date_published = models.DateField(default=None, blank=True, null=True)
     songs = models.ManyToManyField('Song', through='MixSong', blank=True, null=True)
 
     class Meta:
