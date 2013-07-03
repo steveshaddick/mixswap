@@ -47,7 +47,7 @@ def mix(request, pk):
             if ('isPublished' in data):
                 mix.is_published = data['isPublished']
                 if (mix.is_published and mix.date_published is None):
-                    mix.date_published = datetime.date.now()
+                    mix.date_published = datetime.datetime.now()
                 mix.save()
             
             response['method'] = 'patch'
@@ -67,6 +67,34 @@ def mix(request, pk):
                 'picture_form': picture_form
             }
         )
+
+
+@login_required
+def new_mix(request):
+    mix = Mix(
+        user=request.user
+    )
+    mix.save()
+
+    return jsonResponse(True, {'id': mix.id})
+
+
+@login_required
+def delete_mix(request, pk):
+    try:
+        mix = Mix.objects.get(pk=pk)
+    except mix.DoesNotExist:
+        return jsonResponse(False, {'error': 'No mix.'})
+
+    if (mix.user != request.user):
+        return jsonResponse(False, {'error': 'Bad user.'})
+
+    Song.objects.filter(mix=mix).delete()
+    Comment.objects.filter(mix=mix).delete()
+
+    mix.delete()
+
+    return jsonResponse(True)
 
 
 @login_required

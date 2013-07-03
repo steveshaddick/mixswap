@@ -5,7 +5,7 @@
 <h1>mix(s)wap</h1>
 
 <nav>
-	<a href="#">Make New Mix</a>
+	<a id="makeNewMixLink" href="javascript:;" data-url="{% url 'mixes:new_mix' %}">Make New Mix</a>
 	<a href="{% url 'home:top_favs' %}">Top Favs</a>
 	<a href="{% url 'logout' %}">Logout</a>
 </nav>
@@ -14,9 +14,9 @@
 	<header><h2>My Mixes</h2></header>
 	<table class="my-mixes-table">
 		{% for mix in user_mixes %}
-			<tr class="my-mix-item">
-				<td class="mix-title"><a href="{% url 'mixes:mix' mix.id %}">{{ mix.title }}</a>{% if not mix.is_published %}<span class="unpublished">(unfinished)</span>{% endif %}</td>
-				<td><a class="delete-link" href="javascript:;">delete</a></td>
+			<tr class="my-mix-item" id="myMixItem_{{ mix.id }}">
+				<td class="mix-title"><a id="myMix_{{ mix.id }}" href="{% url 'mixes:mix' mix.id %}">{{ mix.title }}</a>{% if not mix.is_published %}<span class="unpublished">(unfinished)</span>{% endif %}</td>
+				<td><a class="delete-mix-link" href="javascript:;" data-url="{% url 'mixes:delete_mix' mix.id %}" data-id="{{ mix.id }}">delete</a></td>
 			</tr>
 		{% endfor %}
 	</table>
@@ -34,4 +34,17 @@
 		{% endfor %}
 	</table>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+
+        App.init({
+        	page:'home'
+        });
+    });
+
+</script>
+
 {% endblock %}

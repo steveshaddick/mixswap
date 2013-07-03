@@ -67,6 +67,71 @@ var AudioPlayer = {
 	}
 };
 
+var Mix = {
+
+	view: false,
+
+	init: function(data) {
+		this.view = new MixView({
+			model: new MixModel(data),
+			el: $("#mix")[0],
+			id: data.id,
+			isUserMix: data.isUserMix,
+			isPublished: data.isPublished,
+			pictureFile: data.pictureFile
+		});
+
+		AudioPlayer.init();
+		this.view.renderInit();
+	}
+};
+
+var Home = {
+
+	waiting: false,
+
+	init: function(){
+
+		var that = this;
+
+		$("#makeNewMixLink").on('click', function() {
+			if (that.waiting) return;
+			that.waiting = true;
+
+			$.post(
+				$(this).attr('data-url'),
+				{},
+				function(response) {
+					if ((response.success) && (response.id)) {
+						window.location = '/mix/' + response.id;
+					}
+					that.waiting = false;
+				}
+			);
+
+			setTimeout(function() {
+				that.waiting = false;
+			});
+		});
+
+		$(".my-mixes-table").on('click', '.delete-mix-link', function() {
+
+			var $this = $(this);
+			if (!confirm('Are you sure you want to delete ' + $("#myMix_" + $this.attr('data-id')).html() + '?')) return;
+
+			$.post(
+				$this.attr('data-url'),
+				{
+					id: $this.attr('data-id')
+				}
+			);
+			$("#myMixItem_" + $this.attr('data-id')).remove();
+		});
+
+	}
+
+};
+
 var App = {
 
 	init: function(data) {
@@ -93,17 +158,16 @@ var App = {
 		};
 		Backbone.emulateHTTP = true;
 
-		this.mixView = new MixView({
-			model: new Mix(data),
-			el: $("#mix")[0],
-			id: data.id,
-			isUserMix: data.isUserMix,
-			isPublished: data.isPublished,
-			pictureFile: data.pictureFile
-		});
+		switch (data.page) {
+			case 'home':
+				Home.init();
+				break;
 
-		AudioPlayer.init();
-		this.mixView.renderInit();
+			case 'mix':
+				Mix.init(data);
+				break;
+
+		}
 
 	}
 

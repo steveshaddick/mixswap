@@ -122,6 +122,7 @@
     $(document).ready(function() {
 
         App.init({
+            page: 'mix',
             id: {{ mix.id }}, 
             title: '{{ mix.title }}',
             username: '{{ user.first_name }}',
@@ -136,11 +137,6 @@
             ]
         });
     });
-
-    {% for comment in mix.comment_set.all %}
-       // mix.addComment("{{ comment.user.first_name }}", "{{ comment.date }}", "{{ comment.text|linebreaks }}");
-    {% endfor %}
-
 
 </script>
 

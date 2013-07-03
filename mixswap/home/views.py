@@ -7,8 +7,8 @@ from mixes.models import Mix
 @login_required
 def home(request):
     user = request.user
-    user_mixes = Mix.objects.filter(user=user)
-    mixes = Mix.objects.filter(is_published=True)
+    user_mixes = Mix.objects.filter(user=user).order_by('-id')
+    mixes = Mix.objects.filter(is_published=True).order_by('-date_published')
 
     return render(
         request,

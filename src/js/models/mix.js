@@ -1,6 +1,6 @@
 
 
-var Song = Backbone.Model.extend({
+var SongModel = Backbone.Model.extend({
 	
 	url: function() {
         var origUrl = Backbone.Model.prototype.url.call(this);
@@ -27,8 +27,8 @@ var Song = Backbone.Model.extend({
     }
 });
 
-var Songs = Backbone.Collection.extend({
-	model:Song,
+var SongsCollection = Backbone.Collection.extend({
+	model:SongModel,
 	url: '',
 
 	comparator: function( collection ){
@@ -41,7 +41,7 @@ var Songs = Backbone.Collection.extend({
 
 });
 
-var Mix = Backbone.Model.extend({
+var MixModel = Backbone.Model.extend({
 	urlRoot: '/mix',
 
 	url: function() {
@@ -59,16 +59,16 @@ var Mix = Backbone.Model.extend({
 	},
 
 	initialize: function() {
-		this.songs = new Songs(this.attributes.songs);
+		this.songs = new SongsCollection(this.attributes.songs);
 		this.songs.url = this.url() + 'update_song_order/';
 
-		this.comments = new Comments();
+		this.comments = new CommentsCollection();
 		this.comments.url = this.url() + 'comments/';
 		this.comments.fetch();
     }
 });
 
-var Comment = Backbone.Model.extend({
+var CommentModel = Backbone.Model.extend({
 	url: function() {
         var origUrl = Backbone.Model.prototype.url.call(this);
         return origUrl + (origUrl.charAt(origUrl.length - 1) == '/' ? '' : '/');
@@ -91,8 +91,8 @@ var Comment = Backbone.Model.extend({
 
 });
 
-var Comments = Backbone.Collection.extend({
-	model:Comment,
+var CommentsCollection = Backbone.Collection.extend({
+	model:CommentModel,
 	url: '/comments',
 
 	comparator: function( collection ){

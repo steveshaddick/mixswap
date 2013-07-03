@@ -173,7 +173,7 @@ var MixView = Backbone.View.extend({
 					var data = JSON.parse(response.response);
 
 					if (data.success) {
-						song = new Song({
+						song = new SongModel({
 							id: data.song_id,
 							artist: data.artist,
 							title: data.title,
@@ -333,7 +333,7 @@ var MixView = Backbone.View.extend({
 			if (text == '') return;
 
 			var now = new Date();
-			var comment = new Comment({
+			var comment = new CommentModel({
 				'username': that.model.get('username'),
 				'date': now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
 				'text': text,

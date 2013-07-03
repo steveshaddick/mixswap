@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
 
 # Uncomment the next two lines to enable the admin:
 from django.contrib import admin
@@ -6,6 +8,7 @@ admin.autodiscover()
 
 urlpatterns = patterns(
     '',
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('home:home'))),
     url(r'^home/', include('home.urls', namespace="home")),
     url(r'^mix/', include('mixes.urls', namespace="mixes")),
     url(r'^login/$', 'django.contrib.auth.views.login', name="login"),
