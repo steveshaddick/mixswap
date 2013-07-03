@@ -292,6 +292,7 @@ def get_comments(request, pk):
     comments = []
     for comment_item in comments_set:
         comment = {
+            'id': comment_item.id,
             'date': str(comment_item.date),
             'username': comment_item.user.first_name,
             'text': comment_item.text.replace('\n', '<br>').replace('\r', ''),

@@ -507,12 +507,19 @@ var SongView = Backbone.View.extend({
 
 var CommentCollectionView = Backbone.View.extend({
 
+
+
 	initialize: function () {
 		var that = this;
 
 		this.listenTo(this.collection, "add", this.addComment);
 		//this.listenTo(this.collection, "sync", this.renderInitial);
 
+		syncCollection= function() {
+			that.collection.fetch();
+			setTimeout(syncCollection, 300000);
+		};
+		setTimeout(syncCollection, 300000);
 	},
 
 	addComment: function(model) {
@@ -521,17 +528,6 @@ var CommentCollectionView = Backbone.View.extend({
 		});
 		commentView.render();
 		this.$el.prepend(commentView.$el);
-	},
-
-	renderInitial: function() {
-		var that = this;
-		this.collection.each(function(item) {
-			var commentView = new CommentView({
-				model: item
-			});
-			commentView.render();
-			that.$el.append(commentView.$el);
-		});
 	}
 });
 
