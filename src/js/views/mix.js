@@ -515,11 +515,11 @@ var CommentCollectionView = Backbone.View.extend({
 		this.listenTo(this.collection, "add", this.addComment);
 		//this.listenTo(this.collection, "sync", this.renderInitial);
 
-		syncCollection= function() {
+		/*syncCollection= function() {
 			that.collection.fetch();
 			setTimeout(syncCollection, 300000);
 		};
-		setTimeout(syncCollection, 300000);
+		setTimeout(syncCollection, 300000);*/
 	},
 
 	addComment: function(model) {
