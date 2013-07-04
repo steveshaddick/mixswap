@@ -10,3 +10,7 @@ mixswap/settings/
 .sass-cache/
 /node_modules/
 /media/
+/config/
+
+!mixswap/settings/defaults.py
+!mixswap/settings/__init__.pydows
