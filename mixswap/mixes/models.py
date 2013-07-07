@@ -49,7 +49,7 @@ class Song(models.Model):
         if (settings.ENVIRONMENT != 'local'):
            # magic_object = magic.Magic()
             mime = magic.from_file(params['song_file'].temporary_file_path(), mime=True)
-            if ('audio/mp4a' in mime):
+            if ('audio/mp4' in mime):
                 file_type = 'm4a'
             elif ('audio/mpeg' in mime):
                 file_type = 'mp3'
