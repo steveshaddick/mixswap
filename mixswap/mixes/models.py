@@ -4,7 +4,7 @@ from django.conf import settings
 from mutagen.easymp4 import EasyMP4
 from mutagen.easyid3 import EasyID3
 
-#from mutagen.easyid3 import EasyID3
+import magic
 import os, re, time, datetime
 
 
