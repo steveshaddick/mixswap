@@ -145,6 +145,8 @@ def upload_song(request, pk):
                 'mix': mix,
                 'song_file': song_file
             })
+            if (song is False):
+                return jsonResponse(False, {'error': 'Bad file type.'})
             song.save()
 
             song_order = mix.songs.count() + 1

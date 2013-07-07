@@ -35,7 +35,8 @@ var AudioPlayer = {
 				EventDispatcher.dispatchEvent('songStop');
 			},
 			preload: "auto",
-			swfPath: "/js"
+			swfPath: "/js",
+			supplied: "mp3,m4a"
 		});
 
 		EventDispatcher.addEventListener('songPlay', function(obj){ that.play(obj.song, obj.autoPlay); });
@@ -55,6 +56,7 @@ var AudioPlayer = {
 
 		var mediaObj = {};
 		mediaObj[ext] = file;
+		console.log(ext);
 
 		this.$audioPlayer.jPlayer("setMedia", mediaObj);
 		if (autoPlay) {

@@ -1,8 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-
+from mutagen.easymp4 import EasyMP4
 from mutagen.easyid3 import EasyID3
+
+#from mutagen.easyid3 import EasyID3
 import os, re, time, datetime
 
 
@@ -43,9 +45,29 @@ class Song(models.Model):
 
     @classmethod
     def create(cls, params):
-        metaData = EasyID3(params['song_file'].temporary_file_path())
+        file_type = ''
+        if (settings.ENVIRONMENT != 'local'):
+            magic_object = magic.Magic()
+            mime = magic_object.from_file(params['song_file'].temporary_file_path(), mime=True)
+            if ('audio/mp4a' in mime):
+                file_type = 'm4a'
+            elif ('audio/mpeg' in mime):
+                file_type = 'mp3'
+            else:
+                file_type = 'unknown'
+        else:
+            file_type = 'mp3'
+
+        if (file_type == 'mp3'):
+            metaData = EasyID3(params['song_file'].temporary_file_path())
+        elif (file_type == 'm4a'):
+            metaData = EasyMP4(params['song_file'].temporary_file_path())
+        else:
+            return False
+        
         title = metaData['title'][0].encode('ascii', 'ignore')
         artist = metaData['artist'][0].encode('ascii', 'ignore')
+
         song = cls(
             user=params['user'],
             title=title,
