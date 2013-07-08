@@ -7,17 +7,17 @@
 {% block content %}
 <div id="bgDropper"></div>
 
-<div id="back">
-	<a href="{% url 'home:home' %}"><span style="font-size:50px;">&laquo;</span> <span style="line-height: 38px;margin-top: 5px;text-transform: uppercase;vertical-align: top;">home</span></a>
-</div>
-
 <div id="contentWrapper">
     <div id="mix">
 
         <header>
             <h1 id="mixTitle" class="mix-title"></h1>
-            <span id="mixUsername"></span>
-            <span id="mixDownload"><a class="mix-download-link" href="{{ 'download' }}">download</a></span>
+            <span id="mixUsername" class="mix-user"></span>
+            <a id="downloadMixLink" class="download-mix-link" href="{{ 'download' }}">Download</a>
+            <a href="javascript:;" id="unpublishMixLink" class="unpublish-mix-link">Unpublish</a>
+            <a href="javascript:;" id="publishMixLink" class="publish-mix-link">Publish</a>
+            <a href="{% url 'home:home' %}" class="home-link">Home</a>
+            <br class="clear unpublish-only">
         </header>
         
         <nav>
@@ -71,12 +71,10 @@
     
     
     <section id="publishMixBlock" class="publish-mix-block">
-        <a href="javascript:;" id="publishMixLink" class="publish-mix-link">Publish</a>
-        <a href="javascript:;" id="unpublishMixLink" class="unpublish-mix-link">Unpublish</a>
+        
     </section>
     
     <section id="comments" class="comments-block">
-    	<h1>Comment</h1>
         <div class="add-comment-block">
         	<textarea id="txtAddComment" rows="3" cols="40"></textarea>
             <button id="btnAddComment">Add</button>
@@ -87,11 +85,13 @@
 </div>
 
 <section class="change-bg-block">
-    <h1>Change background picture</h1>
-    <a id="removeBG" href="javascript:;">remove</a>
+    <span class="title">Change background picture </span>
+    <span class="instructions">Drag picture onto background,<br>or click "add"</span>
+    
     <form id="uploadPictureForm" action="{% url 'mixes:upload_picture' mix.pk %}" enctype="multipart/form-data" method="POST">
         <div id="picUploader">There's a problem, this isn't going to work.</div>
     </form>
+    <a id="removeBG" class="delete-link" href="javascript:;">remove current picture</a>
 </section>
 
 <footer>
@@ -101,15 +101,17 @@
 	
     <li id="tmpSongItem" class="song-item">        
         <input id="chkFavourite" name="chkFavourite" class="favourite-checkbox" title="Favourite Track" type="checkbox" />
-        <span class="song-order"></span>
-        <div class="song-wrapper"><span class="song-title"></span><br><span class="song-artist"></span></div>
-        <div class="total-favourite"></div>
+        <div class="song-wrapper">
+            <span class="song-order"></span>
+            <span class="song-title"></span><br><span class="song-artist"></span>
+            <div class="total-favourite"></div>
+        </div>
         <a class="song-delete" href="javascript:;">x</a>
     </li>
     
     <div id="tmpCommentItem" class="comment-item">
-    	<span class="username"></span> <time class="date" datetime=""></time><br>
         <span class="text"></span>
+    	<span class="username"></span> <time class="date" datetime=""></time>
     </div>
     
    <iframe id="iUpload" name="iUpload" src="#" style="display:none;visibility:hidden;width:0;height:0;"></iframe> 

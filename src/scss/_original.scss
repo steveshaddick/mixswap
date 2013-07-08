@@ -1,18 +1,6 @@
 @charset "utf-8";
 /* CSS Document */
-html, body {
-  height: 100%;
-  margin:0;
-  padding: 0;
-}
-body {
-	font-family:Helvetica, Arial, sans-serif;
-	background: #eaeaea fixed;
-	background-size:100% 100%;
-	-webkit-background-size: 100% 100%;
-	-moz-background-size:100% 100%;
-	
-}
+
 
 .inputText {
 	width:200px;
@@ -81,22 +69,6 @@ input:valid {
 	font-size:10px;
 	color:#F90;
 }
-
-
-
-
-
-header {
-	font-family: helvetica, arial, sans-serif;
-}
-header h1 {
-	font-size:50px;
-}
-header h2 {
-	font-size:12px;
-}
-
-
 
 
 #secLogin {
@@ -171,44 +143,7 @@ header h2 {
 	background-color:rgba(255,255,255,1);
 }
 
-#contentWrapper {
-	/*width: 400px;*/
-	margin:0 auto;
-	font-family: helvetica, arial, sans-serif;
-	padding-top:10px;
-}
 
-#contentWrapper header {
-	background-color: rgba(255,255,255,0.75);
-	padding:5px;
-	
-	-webkit-border-bottom-right-radius: 10px;
-	-moz-border-radius-bottomright: 10px;
-}
-
-#mixTitle{
-	font-size: 34px;
-    font-weight: bold;
-	color:#666;
-}
-#mixUserName{
-	font-size:14px;
-	font-weight:bold;
-}
-
-#mixDownload {
-	background-color: #663300;
-    float: right;
-    font-size: 12px;
-    padding: 3px;
-	
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-}
-#mixDownload a {
-	color:#FFF;
-	text-decoration:none;
-}
 
 #audioElement {
 	width:400px;

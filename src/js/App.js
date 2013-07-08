@@ -56,7 +56,6 @@ var AudioPlayer = {
 
 		var mediaObj = {};
 		mediaObj[ext] = file;
-		console.log(ext);
 
 		this.$audioPlayer.jPlayer("setMedia", mediaObj);
 		if (autoPlay) {

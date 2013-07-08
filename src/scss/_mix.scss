@@ -18,18 +18,80 @@
 }
 
 #contentWrapper {
-	width: 420px;
 	margin:0 auto;
-	font-family: helvetica, arial, sans-serif;
+	width: 420px;
 	position:relative;
 	z-index:10;
+
+}
+
+#mix {
+
+	header {
+		padding:10px;
+		background-color: rgba(255,255,255,0.75);
+	}
+}
+
+.mix-title {
+	font-size: 30px;
+    font-weight: bold;
+	color:#333;
+	margin:0;
+}
+.mix-user {
+	font-size:14px;
+}
+
+.mix-list {
+	background-color: rgba(255, 255, 255, 0.75);
+	margin-top: 15px;
+}
+
+.publish-mix-link {
+	display:block;
+	background: #006600;
+	border-radius:5px;
+	padding:10px 20px;
+	font-size:14px;
+	color:#fff;
+	text-decoration: none;
+	float:right;
+	font-weight: bold;
+	margin-top:10px;
+	&:hover {
+		background:#5db95d;
+	}
+}
+
+.unpublish-only {
+	display:none;
+}
+
+.home-link,
+.download-mix-link,
+.unpublish-mix-link {
+	float:right;
+	display:block;
+	color:#999;
+	margin-right:10px;
+	text-decoration: none;
+	&:hover {
+		color:#333;
+		text-decoration: underline;
+	}
+	font-size: 14px;
+}
+.publish-mix-link,
+.unpublish-mix-link {
+	display:none;
 }
 
 .song-list {
 
-	background-color: rgba(255, 255, 255, 0.75);
 	padding:0;
 	list-style-type:none;
+	margin:0;
 
 	&:after {
 		content: "."; 
@@ -39,45 +101,52 @@
 		clear: both;
 	}
 
-	a {
-		text-decoration: none;
-		color:#060;
-	}
-
 	.song-item {
 		clear:both;
 		position:relative;
+		margin: 5px 0;
+		border-bottom: 1px solid #DFDFDF;
+		padding-bottom: 5px;
+
+		&.playing {
+			background:#eceacb;
+		}
 	}
 
 	.song-order {
 		width:25px;
 		display:block;
-		float:left;
-	}
-	.song-wrapper {
-		float:left;    
-		width: 350px;    
-		margin-bottom: 10px;
+		position:absolute;
+		top:5px;
+		left:5px;
+		color:#848484;
+		font-size:10px;
 	}
 	.song-title {
-		font-size: 22px;
+		display: inline-block;
+	    font-size: 16px;
+	    margin-top: 3px;
+	    padding-left: 20px;
 	}
 	.song-artist {
 		font-size: 12px;
 		font-weight: bold;
+		padding-left:20px;
+		color:#848484;
 	}
 
 	.favourite-checkbox {
 		position:absolute;
-		left: -24px;
-		top:0;
+		left: -22px;
+		top:1px;
 	}
 	.total-favourite {
 		font-size:10px;
 		color:#999;
 		position:absolute;
 		right:0;
-		width:40px;
+		top:5px;
+		padding-right:5px;
 	}
 }
 
@@ -86,8 +155,20 @@
 	display:none;
 }
 
+.song-delete {
+	color:#660000;
+	font-weight: bold;
+	position:absolute;
+	right:5px;
+	top:0;
+	text-decoration: none;
+	&:hover {
+		color:#d25757;
+	}
+}
+
 .comments-block {
-	padding-top:10px;
+	margin-top:20px;
 
 	h1{
 		background-color: rgba(255, 255, 255, 0.85);
@@ -96,28 +177,37 @@
 		color: #666666;
 		font-size:16px;
 		
-		border-top-left-radius: 5px;
-		border-top-right-radius: 5px;
 	}
 
 	.add-comment-block {
-		background-color: rgba(255, 255, 255, 0.75);
+		text-align: right;
+		margin-bottom: 10px;
+
+		textarea {
+			text-align: left;
+			width:99%;
+		}
 	}
 
 	.comments-list {
 		background-color: rgba(255, 255, 255, 0.75);
 		border-bottom-right-radius: 10px;
+		padding:5px;
 	}
 
 	.comment-item {
 		padding:5px;
 		.username {
-			font-weight:bold;
+			color: #848484;
+		    font-size: 14px;
+		    font-weight: bold;
 		}
-		.time {
+		.date {
 			font-size:10px;
+			display:none;
 		}
 		.text {
+			display:block;
 		}
 	}
 	
@@ -129,12 +219,13 @@
 	background-color:rgba(255,255,255,0.5);
 	border-top:thin solid;
 	padding:5px;
-	border-bottom-right-radius: 10px;
+	margin-top:20px;
 
 	h1 {
 		line-height:25px;
 		color:#060;
-		margin-bottom: 0;
+		margin-top: 0;
+		margin-bottom:10px;
 	}
 
 	h2 {
@@ -156,14 +247,39 @@
 
 .change-bg-block {
 
-	background-color: rgba(255, 255, 255, 0.5);
+	background-color: rgba(255, 255, 255, 0.75);
     bottom: 0;
     left: 0;
     position: fixed ;
-	padding:5px;
+	padding:10px;
 	display:none;
+	text-align: center;
+
+	.title {
+		font-weight:bold;
+		display:block;
+		position:relative;
+	}
+	.instructions {
+		font-style: italic;
+		display:block;
+		font-size:12px;
+	}
+
+	.delete-link {
+		color:#660000;
+		font-size:14px;
+		text-decoration: none;
+		font-weight: bold;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
 
 	/** uploader overrides **/
+	form {
+		margin:10px 0;
+	}
 	.plupload_scroll .plupload_filelist {
 		height:auto;
 	}
@@ -177,6 +293,7 @@
 		overflow:auto;
 	}
 
+	.plupload_start,
 	.plupload_filelist_header,
 	.plupload_header,
 	.plupload_file_size {
@@ -188,12 +305,9 @@
 /** Mix admin **/
 
 .admin {
-	.publish-mix-block {
+	.unpublish-mix-link {
 		display:block;
 	}
-
-	
-
 	.publish-mix-link {
 		display:none;
 	}
@@ -201,26 +315,39 @@
 
 .unpublished {
 
+	.download-mix-link,
 	.unpublish-mix-link,
 	.favourite-checkbox,
 	.total-favourite {
 		display:none;
 	}
 
+	.unpublish-only {
+		display:block;
+	}
+
 	.comments-block {
 		display:none;
 	}
 
-	.song-delete,
-	.publish-mix-link {
+	.song-delete
+	 {
+		
 		display: inline;
 	}
 
 	#bgDropper,
+	.publish-mix-link,
 	.change-bg-block ,
 	.add-song-block,
 	.publish-mix-block {
 		display:block;
+	}
+
+	.home-link {
+		float:none;
+		margin-top:12px;
+		font-weight: bold;
 	}
 
 }
@@ -254,4 +381,47 @@ header .editable-container.editable-inline {
 			padding:5px;
 		}
 	}
+}
+
+
+/** jplayer overrides **/
+
+div.jp-audio {
+	border:0;
+	font-family:inherit;
+	background:none;
+}
+
+div.jp-interface {
+	background: #333;
+	border-top:3px solid #000;
+}
+
+div.jp-seek-bar {
+	background:none;
+}
+
+div.jp-progress {
+	background:#848484;
+}
+
+div.jp-play-bar {
+	background:#afafaf;
+}
+
+div.jp-current-time {
+	color:#afafaf;
+	font-style:normal;
+	font-size:12px;
+}
+
+div.jp-title {
+	background:none;
+	background-color: rgba(255,255,255,0.75);
+	font-size: 22px;
+    margin: 0 auto;
+    overflow: hidden;
+    width: 90%;
+    color:#333;
+    font-weight: normal;
 }

@@ -24,15 +24,18 @@ var MixView = Backbone.View.extend({
 	playSong: function(song, autoPlay) {
 		if (!song) return;
 
-		if (this.currentPlayingSong) {
-
+		if (this.currentPlayingSong != song) {
+			this.songStopHandler();
 		}
+
 		this.currentPlayingSong = song;
+		$("#song_" + this.currentPlayingSong.id).addClass('playing');
 		EventDispatcher.dispatchEvent('songPlay', {song: this.currentPlayingSong, autoPlay: autoPlay} );
 	},
 
 	songStopHandler: function() {
-		console.log("song stopped", this);
+
+		$("#song_" + this.currentPlayingSong.id).removeClass('playing');
 		this.currentPlayingSong = false;
 	},
 
@@ -270,6 +273,10 @@ var MixView = Backbone.View.extend({
 				}
 			}
 		});
+		
+		$("#picUploader_browse").html("Add");
+
+
 
 		// Client side form validation
 		$('#uploadPictureForm').submit(function(e) {
@@ -298,10 +305,25 @@ var MixView = Backbone.View.extend({
 	},
 
 	renderInit: function() {
-		console.log("rendering mix");
 
 		$("#mixTitle").html(this.model.attributes.title);
 		$("#mixUsername").html('by ' + this.model.attributes.username);
+
+		if (this.options.isUserMix) {
+			$('body').addClass('admin');
+
+			if (!this.options.isPublished){
+				this.setUnpublished();
+			}
+		}
+
+		this.renderPictureFile();
+		this.songs.collection.trigger('reset');
+
+		if (this.options.isPublished) {
+			var song = this.songs.collection.findWhere({songOrder: 1});
+			this.playSong(song, false);
+		}
 
 		var that = this;
 		this.songs.$el.on('click', '.song-wrapper', function() {
@@ -344,26 +366,8 @@ var MixView = Backbone.View.extend({
 			$("#txtAddComment").val('');
 		});
 
-
-
 		//EventDispatcher.addEventListener('songStop', function(){ that.songStopHandler(); });
 		EventDispatcher.addEventListener('songEnded', function(){ that.songEndedHandler(); });
-
-		if (this.options.isUserMix) {
-			$('body').addClass('admin');
-
-			if (!this.options.isPublished){
-				this.setUnpublished();
-			}
-		}
-
-		if (this.options.isPublished) {
-			var song = this.songs.collection.findWhere({songOrder: 1});
-			this.playSong(song, false);
-		}
-
-		this.renderPictureFile();
-		this.songs.collection.trigger('reset');
 
 		return this;
 	},
