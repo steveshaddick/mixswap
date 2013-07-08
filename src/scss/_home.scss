@@ -2,14 +2,96 @@ table {
 	width:100%;
 }
 
-.my-mixes-block {
-	float:left;
-	width:400px;
-	margin:0 20px;
+.home {
+	a {
+		text-decoration: none;
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	.main-wrapper {
+		width:80%;
+		min-width:700px;
+		margin:0 auto;
+		background:rgba(255,255,255,0.75);
+		padding:0 30px;
+		min-height:100%;
+		border-left: 2px solid #FFFFFF;
+    	border-right: 2px solid #FFFFFF;
+	}
+
+	h1 {
+		font-size:44px;
+	}
+
+	h2 {
+		font-size: 16px;
+		margin:0;
+		color:#333;
+	}
+
+	nav {
+		margin-bottom:40px;
+
+		a {
+			color:#666;
+			margin-right:10px;
+
+			&.new-mix-link {
+				color: #006600;
+				font-weight: bold;
+			}
+
+			
+		}
+	}
+
+	.mix-list-table {
+		font-size:14px;
+		background:rgba(255,255,255,0.5);
+		a {
+			font-weight: bold;
+		}
+		.mix-image {
+			width:100px;
+			img {
+				width:100px;
+			}
+		}
+
+		td {
+			padding:10px 5px;
+		}
+	}
+
+	.my-mixes-block {
+		float:left;
+		width:300px;
+		margin-right:20px;
+
+		.unpublished {
+			color:#e47509;
+		}
+		.delete-mix-link {
+			color: #660000;
+
+		}
+		.delete-mix {
+			text-align: right;
+		}
+
+	}
+
+	.all-mixes-block {
+		float:left;
+		width:500px;
+
+		.mix-title a{
+			font-size:20px;
+		}
+
+	}
+
 }
 
-.all-mixes-block {
-	float:left;
-	width:500px;
-	margin:0 20px;
-}

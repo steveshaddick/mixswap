@@ -5,7 +5,7 @@ html, body {
 }
 body {
 	font-family:'Droid Sans', sans-serif;
-	background: #eaeaea fixed;
+	background: #848484 fixed;
 	background-size:100% 100%;
 	-webkit-background-size: 100% 100%;
 	-moz-background-size:100% 100%;
@@ -13,4 +13,12 @@ body {
 
 .clear {
 	clear:both;
+}
+
+h1 {
+	margin:0;
+}
+
+a img {
+	border:0;
 }

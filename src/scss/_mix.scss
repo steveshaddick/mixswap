@@ -1,427 +1,430 @@
-.main-wrapper {
-	min-height:100%;
-	background: no-repeat center top fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-}
-
-#bgDropper {
-	display:none;
-	position:fixed;
-	top:0;
-	left:0;
-	width:100%;
-	height:100%;
-	z-index:0;
-}
-
-#contentWrapper {
-	margin:0 auto;
-	width: 420px;
-	position:relative;
-	z-index:10;
-
-}
-
-#mix {
-
-	header {
-		padding:10px;
-		background-color: rgba(255,255,255,0.75);
+.mix-page {
+	.main-wrapper {
+		min-height:100%;
+		background: no-repeat center top fixed;
+	    -webkit-background-size: cover;
+	    -moz-background-size: cover;
+	    -o-background-size: cover;
+	    background-size: cover;
 	}
-}
 
-.mix-title {
-	font-size: 30px;
-    font-weight: bold;
-	color:#333;
-	margin:0;
-}
-.mix-user {
-	font-size:14px;
-}
-
-.mix-list {
-	background-color: rgba(255, 255, 255, 0.75);
-	margin-top: 15px;
-}
-
-.publish-mix-link {
-	display:block;
-	background: #006600;
-	border-radius:5px;
-	padding:10px 20px;
-	font-size:14px;
-	color:#fff;
-	text-decoration: none;
-	float:right;
-	font-weight: bold;
-	margin-top:10px;
-	&:hover {
-		background:#5db95d;
+	#bgDropper {
+		display:none;
+		position:fixed;
+		top:0;
+		left:0;
+		width:100%;
+		height:100%;
+		z-index:0;
 	}
-}
 
-.unpublish-only {
-	display:none;
-}
+	#contentWrapper {
+		margin:0 auto;
+		width: 420px;
+		position:relative;
+		z-index:10;
 
-.home-link,
-.download-mix-link,
-.unpublish-mix-link {
-	float:right;
-	display:block;
-	color:#999;
-	margin-right:10px;
-	text-decoration: none;
-	&:hover {
+	}
+
+	#mix {
+
+		header {
+			padding:10px;
+			background-color: rgba(255,255,255,0.75);
+		}
+	}
+
+	.mix-title {
+		font-size: 30px;
+	    font-weight: bold;
 		color:#333;
-		text-decoration: underline;
+		margin:0;
 	}
-	font-size: 14px;
-}
-.publish-mix-link,
-.unpublish-mix-link {
-	display:none;
-}
-
-.song-list {
-
-	padding:0;
-	list-style-type:none;
-	margin:0;
-
-	&:after {
-		content: "."; 
-		visibility: hidden; 
-		display: block; 
-		height: 0; 
-		clear: both;
+	.mix-user {
+		font-size:14px;
 	}
 
-	.song-item {
-		clear:both;
-		position:relative;
-		margin: 5px 0;
-		border-bottom: 1px solid #DFDFDF;
-		padding-bottom: 5px;
-
-		&.playing {
-			background:#eceacb;
-		}
-	}
-
-	.song-order {
-		width:25px;
-		display:block;
-		position:absolute;
-		top:5px;
-		left:5px;
-		color:#848484;
-		font-size:10px;
-	}
-	.song-title {
-		display: inline-block;
-	    font-size: 16px;
-	    margin-top: 3px;
-	    padding-left: 20px;
-	}
-	.song-artist {
-		font-size: 12px;
-		font-weight: bold;
-		padding-left:20px;
-		color:#848484;
-	}
-
-	.favourite-checkbox {
-		position:absolute;
-		left: -22px;
-		top:1px;
-	}
-	.total-favourite {
-		font-size:10px;
-		color:#999;
-		position:absolute;
-		right:0;
-		top:5px;
-		padding-right:5px;
-	}
-}
-
-.song-delete,
-.publish-mix-block {
-	display:none;
-}
-
-.song-delete {
-	color:#660000;
-	font-weight: bold;
-	position:absolute;
-	right:5px;
-	top:0;
-	text-decoration: none;
-	&:hover {
-		color:#d25757;
-	}
-}
-
-.comments-block {
-	margin-top:20px;
-
-	h1{
-		background-color: rgba(255, 255, 255, 0.85);
-		display:inline;
-		padding:0 5px;
-		color: #666666;
-		font-size:16px;
-		
-	}
-
-	.add-comment-block {
-		text-align: right;
-		margin-bottom: 10px;
-
-		textarea {
-			text-align: left;
-			width:99%;
-		}
-	}
-
-	.comments-list {
+	.mix-list {
 		background-color: rgba(255, 255, 255, 0.75);
-		border-bottom-right-radius: 10px;
-		padding:5px;
+		margin-top: 15px;
 	}
 
-	.comment-item {
-		padding:5px;
-		.username {
-			color: #848484;
-		    font-size: 14px;
-		    font-weight: bold;
-		}
-		.date {
-			font-size:10px;
-			display:none;
-		}
-		.text {
-			display:block;
-		}
-	}
-	
-}
-
-
-.add-song-block {
-	display:none;
-	background-color:rgba(255,255,255,0.5);
-	border-top:thin solid;
-	padding:5px;
-	margin-top:20px;
-
-	h1 {
-		line-height:25px;
-		color:#060;
-		margin-top: 0;
-		margin-bottom:10px;
-	}
-
-	h2 {
-		padding-top: 10px;
-		font-weight:normal;
-		display:inline;
-		font-size:14px;
-	}
-
-	/** uploader overrides **/
-	.plupload_container {
-		padding:0;
-	}
-	.plupload_header,
-	.plupload_file_size {
-		display:none;
-	}
-}
-
-.change-bg-block {
-
-	background-color: rgba(255, 255, 255, 0.75);
-    bottom: 0;
-    left: 0;
-    position: fixed ;
-	padding:10px;
-	display:none;
-	text-align: center;
-
-	.title {
-		font-weight:bold;
-		display:block;
-		position:relative;
-	}
-	.instructions {
-		font-style: italic;
-		display:block;
-		font-size:12px;
-	}
-
-	.delete-link {
-		color:#660000;
-		font-size:14px;
-		text-decoration: none;
-		font-weight: bold;
-		&:hover {
-			text-decoration: underline;
-		}
-	}
-
-	/** uploader overrides **/
-	form {
-		margin:10px 0;
-	}
-	.plupload_scroll .plupload_filelist {
-		height:auto;
-	}
-	li.plupload_droptext {
-		line-height: 30px;
-	}
-	.plupload_container {
-		padding:0;
-	}
-	.plupload_scroll .plupload_filelist {
-		overflow:auto;
-	}
-
-	.plupload_start,
-	.plupload_filelist_header,
-	.plupload_header,
-	.plupload_file_size {
-		display:none;
-	}
-}
-
-
-/** Mix admin **/
-
-.admin {
-	.unpublish-mix-link {
-		display:block;
-	}
 	.publish-mix-link {
-		display:none;
-	}
-}
-
-.unpublished {
-
-	.download-mix-link,
-	.unpublish-mix-link,
-	.favourite-checkbox,
-	.total-favourite {
-		display:none;
+		display:block;
+		background: #006600;
+		border-radius:5px;
+		padding:10px 20px;
+		font-size:14px;
+		color:#fff;
+		text-decoration: none;
+		float:right;
+		font-weight: bold;
+		margin-top:10px;
+		&:hover {
+			background:#5db95d;
+		}
 	}
 
 	.unpublish-only {
-		display:block;
-	}
-
-	.comments-block {
 		display:none;
 	}
 
-	.song-delete
-	 {
-		
-		display: inline;
+	.home-link,
+	.download-mix-link,
+	.unpublish-mix-link {
+		float:right;
+		display:block;
+		color:#999;
+		margin-right:10px;
+		text-decoration: none;
+		&:hover {
+			color:#333;
+			text-decoration: underline;
+		}
+		font-size: 14px;
 	}
-
-	#bgDropper,
 	.publish-mix-link,
-	.change-bg-block ,
-	.add-song-block,
-	.publish-mix-block {
-		display:block;
+	.unpublish-mix-link {
+		display:none;
 	}
 
-	.home-link {
-		float:none;
-		margin-top:12px;
-		font-weight: bold;
-	}
+	.song-list {
 
-}
+		padding:0;
+		list-style-type:none;
+		margin:0;
 
+		&:after {
+			content: "."; 
+			visibility: hidden; 
+			display: block; 
+			height: 0; 
+			clear: both;
+		}
 
+		.song-item {
+			clear:both;
+			position:relative;
+			margin: 5px 0;
+			border-bottom: 1px solid #DFDFDF;
+			padding-bottom: 5px;
 
+			&.playing {
+				background:#eceacb;
+			}
+		}
 
-/** x-editable overrides **/
+		.song-order {
+			width:25px;
+			display:block;
+			position:absolute;
+			top:5px;
+			left:5px;
+			color:#848484;
+			font-size:10px;
+		}
+		.song-title {
+			display: inline-block;
+		    font-size: 16px;
+		    margin-top: 3px;
+		    padding-left: 20px;
+		}
+		.song-artist {
+			font-size: 12px;
+			font-weight: bold;
+			padding-left:20px;
+			color:#848484;
+		}
 
-input {
-	font: inherit;
-	-moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-	box-sizing: border-box;
-
-	color:inherit;
-}
-
-header .editable-container.editable-inline {
-	display:block;
-
-	.editable-input {
-		display:block;
-		font-size:34px;
-		font-weight:bold;
-		color:#666;
-
-		input {
-			margin: 22px 0;
-			width:100%;
-			padding:5px;
+		.favourite-checkbox {
+			position:absolute;
+			left: -22px;
+			top:1px;
+		}
+		.total-favourite {
+			font-size:10px;
+			color:#999;
+			position:absolute;
+			right:0;
+			top:5px;
+			padding-right:5px;
 		}
 	}
+
+	.song-delete,
+	.publish-mix-block {
+		display:none;
+	}
+
+	.song-delete {
+		color:#660000;
+		font-weight: bold;
+		position:absolute;
+		right:5px;
+		top:0;
+		text-decoration: none;
+		&:hover {
+			color:#d25757;
+		}
+	}
+
+	.comments-block {
+		margin-top:20px;
+
+		h1{
+			background-color: rgba(255, 255, 255, 0.85);
+			display:inline;
+			padding:0 5px;
+			color: #666666;
+			font-size:16px;
+			
+		}
+
+		.add-comment-block {
+			text-align: right;
+			margin-bottom: 10px;
+
+			textarea {
+				text-align: left;
+				width:99%;
+			}
+		}
+
+		.comments-list {
+			background-color: rgba(255, 255, 255, 0.75);
+			border-bottom-right-radius: 10px;
+			padding:5px;
+		}
+
+		.comment-item {
+			padding:5px;
+			.username {
+				color: #848484;
+			    font-size: 14px;
+			    font-weight: bold;
+			}
+			.date {
+				font-size:10px;
+				display:none;
+			}
+			.text {
+				display:block;
+			}
+		}
+		
+	}
+
+
+	.add-song-block {
+		display:none;
+		background-color:rgba(255,255,255,0.5);
+		border-top:thin solid;
+		padding:5px;
+		margin-top:20px;
+
+		h1 {
+			line-height:25px;
+			color:#060;
+			margin-top: 0;
+			margin-bottom:10px;
+		}
+
+		h2 {
+			padding-top: 10px;
+			font-weight:normal;
+			display:inline;
+			font-size:14px;
+		}
+
+		/** uploader overrides **/
+		.plupload_container {
+			padding:0;
+		}
+		.plupload_header,
+		.plupload_file_size {
+			display:none;
+		}
+	}
+
+	.change-bg-block {
+
+		background-color: rgba(255, 255, 255, 0.75);
+	    bottom: 0;
+	    left: 0;
+	    position: fixed ;
+		padding:10px;
+		display:none;
+		text-align: center;
+
+		.title {
+			font-weight:bold;
+			display:block;
+			position:relative;
+		}
+		.instructions {
+			font-style: italic;
+			display:block;
+			font-size:12px;
+		}
+
+		.delete-link {
+			color:#660000;
+			font-size:14px;
+			text-decoration: none;
+			font-weight: bold;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		/** uploader overrides **/
+		form {
+			margin:10px 0;
+		}
+		.plupload_scroll .plupload_filelist {
+			height:auto;
+		}
+		li.plupload_droptext {
+			line-height: 30px;
+		}
+		.plupload_container {
+			padding:0;
+		}
+		.plupload_scroll .plupload_filelist {
+			overflow:auto;
+		}
+
+		.plupload_start,
+		.plupload_filelist_header,
+		.plupload_header,
+		.plupload_file_size {
+			display:none;
+		}
+	}
+
+
+	/** Mix admin **/
+
+	&.admin {
+		.unpublish-mix-link {
+			display:block;
+		}
+		.publish-mix-link {
+			display:none;
+		}
+	}
+
+	&.unpublished {
+
+		.download-mix-link,
+		.unpublish-mix-link,
+		.favourite-checkbox,
+		.total-favourite {
+			display:none;
+		}
+
+		.unpublish-only {
+			display:block;
+		}
+
+		.comments-block {
+			display:none;
+		}
+
+		.song-delete
+		 {
+			
+			display: inline;
+		}
+
+		#bgDropper,
+		.publish-mix-link,
+		.change-bg-block ,
+		.add-song-block,
+		.publish-mix-block {
+			display:block;
+		}
+
+		.home-link {
+			float:none;
+			margin-top:12px;
+			font-weight: bold;
+		}
+
+	}
+
+
+
+
+	/** x-editable overrides **/
+
+	input {
+		font: inherit;
+		-moz-box-sizing: border-box;
+	    -webkit-box-sizing: border-box;
+		box-sizing: border-box;
+
+		color:inherit;
+	}
+
+	header .editable-container.editable-inline {
+		display:block;
+
+		.editable-input {
+			display:block;
+			font-size:34px;
+			font-weight:bold;
+			color:#666;
+
+			input {
+				margin: 22px 0;
+				width:100%;
+				padding:5px;
+			}
+		}
+	}
+
+
+	/** jplayer overrides **/
+
+	div.jp-audio {
+		border:0;
+		font-family:inherit;
+		background:none;
+	}
+
+	div.jp-interface {
+		background: #333;
+		border-top:3px solid #000;
+	}
+
+	div.jp-seek-bar {
+		background:none;
+	}
+
+	div.jp-progress {
+		background:#848484;
+	}
+
+	div.jp-play-bar {
+		background:#afafaf;
+	}
+
+	div.jp-current-time {
+		color:#afafaf;
+		font-style:normal;
+		font-size:12px;
+	}
+
+	div.jp-title {
+		background:none;
+		background-color: rgba(255,255,255,0.75);
+		font-size: 22px;
+	    margin: 0 auto;
+	    overflow: hidden;
+	    width: 90%;
+	    color:#333;
+	    font-weight: normal;
+	}
 }
 
-
-/** jplayer overrides **/
-
-div.jp-audio {
-	border:0;
-	font-family:inherit;
-	background:none;
-}
-
-div.jp-interface {
-	background: #333;
-	border-top:3px solid #000;
-}
-
-div.jp-seek-bar {
-	background:none;
-}
-
-div.jp-progress {
-	background:#848484;
-}
-
-div.jp-play-bar {
-	background:#afafaf;
-}
-
-div.jp-current-time {
-	color:#afafaf;
-	font-style:normal;
-	font-size:12px;
-}
-
-div.jp-title {
-	background:none;
-	background-color: rgba(255,255,255,0.75);
-	font-size: 22px;
-    margin: 0 auto;
-    overflow: hidden;
-    width: 90%;
-    color:#333;
-    font-weight: normal;
-}

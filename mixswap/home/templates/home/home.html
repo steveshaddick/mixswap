@@ -5,18 +5,18 @@
 <h1>mix(s)wap</h1>
 
 <nav>
-	<a id="makeNewMixLink" href="javascript:;" data-url="{% url 'mixes:new_mix' %}">Make New Mix</a>
+	<a id="makeNewMixLink" href="javascript:;" data-url="{% url 'mixes:new_mix' %}" class="new-mix-link">Make New Mix</a>
 	<a href="{% url 'home:top_favs' %}">Top Favs</a>
 	<a href="{% url 'logout' %}">Logout</a>
 </nav>
 
 <div class="my-mixes-block">
 	<header><h2>My Mixes</h2></header>
-	<table class="my-mixes-table">
+	<table class="mix-list-table my-mixes-table">
 		{% for mix in user_mixes %}
 			<tr class="my-mix-item" id="myMixItem_{{ mix.id }}">
-				<td class="mix-title"><a id="myMix_{{ mix.id }}" href="{% url 'mixes:mix' mix.id %}">{{ mix.title }}</a>{% if not mix.is_published %}<span class="unpublished">(unfinished)</span>{% endif %}</td>
-				<td><a class="delete-mix-link" href="javascript:;" data-url="{% url 'mixes:delete_mix' mix.id %}" data-id="{{ mix.id }}">delete</a></td>
+				<td class="mix-title"><a id="myMix_{{ mix.id }}" href="{% url 'mixes:mix' mix.id %}">{{ mix.title }}</a>{% if not mix.is_published %}<span class="unpublished"> (unfinished)</span>{% endif %}</td>
+				<td class="delete-mix"><a class="delete-mix-link" href="javascript:;" data-url="{% url 'mixes:delete_mix' mix.id %}" data-id="{{ mix.id }}">delete</a></td>
 			</tr>
 		{% endfor %}
 	</table>
@@ -24,9 +24,10 @@
 
 <div class="all-mixes-block">
 	<header><h2>All Mixes</h2></header>
-	<table class="all-mixes-table">
+	<table class="mix-list-table all-mixes-table">
 		{% for mix in all_mixes %}
 			<tr class="mix-item">
+				<td class="mix-image">{% if mix.picture_file %}<a href="{% url 'mixes:mix' mix.id %}"><img src="{{ mix.picture_file.url }}" alt=""></a>{% endif %}</td>
 				<td class="mix-title"><a href="{% url 'mixes:mix' mix.id %}">{{ mix.title }}</a></td>
 				<td class="username">{{ mix.user.first_name }}</td>
 				<td class="date-published">{{ mix.date_published }}</td>
@@ -34,6 +35,7 @@
 		{% endfor %}
 	</table>
 </div>
+<br class="clear">
 {% endblock %}
 
 {% block scripts %}
