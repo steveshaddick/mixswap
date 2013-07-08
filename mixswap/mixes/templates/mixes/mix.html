@@ -127,14 +127,14 @@
             page: 'mix',
             id: {{ mix.id }}, 
             title: '{{ mix.title }}',
-            username: '{{ user.first_name }}',
+            username: '{{ mix.user.first_name }}',
             isUserMix: {% if is_user_mix %}true{% else %}false{% endif %}, 
             isPublished: {% if mix.is_published %}true{% else %}false{% endif %}, 
             pictureFile: '{% if mix.picture_file %}{{ mix.picture_file.url }}{% else %}{% endif %}',
             songs: [
                 {% for mix_song in mix_songs.all %}
                     {% if not forloop.first %}, {% endif %}
-                    { id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: {{ mix_song.song_order }}, songFile: "{{ mix_song.song.song_file.url }}", isUserFav: {% if user in mix_song.favourites.all %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }
+                    { id: {{ mix_song.song.id }}, mixId: {{ mix_song.mix.id }}, artist: "{{ mix_song.song.artist }}", title: "{{ mix_song.song.title }}", songOrder: {{ mix_song.song_order }}, songFile: "{{ mix_song.song.song_file.url }}", isUserFav: {% if user in mix_song.favourites.all %}true{% else %}false{% endif %}, totalFav: {{ mix_song.favourites.all|length }} }  
                 {% endfor %}
             ]
         });

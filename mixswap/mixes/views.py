@@ -25,7 +25,7 @@ def jsonResponse(success, response={}):
 @login_required
 def mix(request, pk):
     mix = get_object_or_404(Mix, pk=pk)
-    is_user_mix = mix.user == request.user
+    is_user_mix = (mix.user == request.user)
     is_published = mix.is_published
 
     if (not is_published) and (not is_user_mix):
@@ -61,7 +61,7 @@ def mix(request, pk):
             'mixes/mix.html',
             {
                 'mix': mix,
-                'user': mix.user,
+                'user': request.user,
                 'mix_songs': MixSong.objects.filter(mix=mix),
                 'is_user_mix': is_user_mix,
                 'picture_form': picture_form

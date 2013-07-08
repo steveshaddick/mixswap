@@ -84,6 +84,7 @@ class MixSong(models.Model):
     song = models.ForeignKey(Song)
     song_order = models.PositiveIntegerField(default=1)
     favourites = models.ManyToManyField(User, related_name='fav+', blank=True, null=True)
+    listens = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return self.song.title + '_' + self.song.artist
