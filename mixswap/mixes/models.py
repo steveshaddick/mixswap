@@ -17,6 +17,28 @@ def get_audio_upload_path(instance, filename):
     return os.path.join("user_%d" % instance.user.id, "audio", "mix_%d" % instance.primary_mix.id, pattern.sub('', filename))
 
 
+def get_audio_meta(file):
+    file_type = ''
+    if (settings.ENVIRONMENT != 'local'):
+       # magic_object = magic.Magic()
+        mime = magic.from_file(file, mime=True)
+        if ('audio/mp4' in mime):
+            file_type = 'm4a'
+        elif ('audio/mpeg' in mime):
+            file_type = 'mp3'
+        else:
+            file_type = 'unknown'
+    else:
+        file_type = 'mp3'
+
+    if (file_type == 'mp3'):
+        return EasyID3(file)
+    elif (file_type == 'm4a'):
+        return EasyMP4(file)
+    else:
+        return False
+
+
 class Mix(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(default='New Mix', max_length=50)
@@ -24,6 +46,7 @@ class Mix(models.Model):
     is_published = models.BooleanField()
     date_published = models.DateField(default=None, blank=True, null=True)
     songs = models.ManyToManyField('Song', through='MixSong', blank=True, null=True)
+    user_listens = models.ManyToManyField(User, related_name='listens+')
 
     class Meta:
         verbose_name_plural = "mixes"
@@ -46,40 +69,27 @@ class Song(models.Model):
     def save(self, *args, **kwargs):
         if ('update_fields' in kwargs):
             if ('title' in kwargs['update_fields']):
-                metaData = EasyID3(settings.MEDIA_ROOT + self.song_file.name.encode('ascii', 'ignore'))
-                metaData['title'] = self.title
-                metaData.save()
+                meta_data = get_audio_meta(settings.MEDIA_ROOT + self.song_file.name.encode('ascii', 'ignore'))
+                if (meta_data is not False):
+                    meta_data['title'] = self.title
+                    meta_data.save()
+            
             elif ('artist' in kwargs['update_fields']):
-                metaData = EasyID3(settings.MEDIA_ROOT + self.song_file.name.encode('ascii', 'ignore'))
-                metaData['artist'] = self.artist
-                metaData.save()
-                
+                meta_data = get_audio_meta(settings.MEDIA_ROOT + self.song_file.name.encode('ascii', 'ignore'))
+                if (meta_data is not False):
+                    meta_data['artist'] = self.artist
+                    meta_data.save()
+
         super(Song, self).save(*args, **kwargs)
 
     @classmethod
     def create(cls, params):
-        file_type = ''
-        if (settings.ENVIRONMENT != 'local'):
-           # magic_object = magic.Magic()
-            mime = magic.from_file(params['song_file'].temporary_file_path(), mime=True)
-            if ('audio/mp4' in mime):
-                file_type = 'm4a'
-            elif ('audio/mpeg' in mime):
-                file_type = 'mp3'
-            else:
-                file_type = 'unknown'
-        else:
-            file_type = 'mp3'
-
-        if (file_type == 'mp3'):
-            metaData = EasyID3(params['song_file'].temporary_file_path())
-        elif (file_type == 'm4a'):
-            metaData = EasyMP4(params['song_file'].temporary_file_path())
-        else:
+        meta_data = get_audio_meta(params['song_file'].temporary_file_path())
+        if (meta_data is False):
             return False
         
-        title = metaData['title'][0].encode('ascii', 'ignore')
-        artist = metaData['artist'][0].encode('ascii', 'ignore')
+        title = meta_data['title'][0].encode('ascii', 'ignore')
+        artist = meta_data['artist'][0].encode('ascii', 'ignore')
 
         song = cls(
             user=params['user'],

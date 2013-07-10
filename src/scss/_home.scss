@@ -67,8 +67,13 @@ table {
 
 	.my-mixes-block {
 		float:left;
-		width:300px;
-		margin-right:20px;
+		width:25%;
+		min-width:200px;
+
+		a {
+			color:#836847;
+			font-weight: bold;
+		}
 
 		.unpublished {
 			color:#e47509;
@@ -85,13 +90,35 @@ table {
 
 	.all-mixes-block {
 		float:left;
-		width:500px;
+		width:60%;
+		margin-right:20px;
+		margin-bottom:20px;
 
 		.mix-title a{
+			color:#333;
 			font-size:20px;
+			display:block;
+
+			&.unheard {
+				color:#6a95e3;
+			}
 		}
 
 	}
+	@media screen and (max-width: 640px) {
+		#mainWrapper {
+			min-width:0;
+		}
+
+		.all-mixes-block,
+		.my-mixes-block {
+			float:none;
+			width:100%;
+		}
+	}
 
 }
+
+
+
 

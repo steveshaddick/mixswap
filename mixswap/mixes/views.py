@@ -56,12 +56,16 @@ def mix(request, pk):
 
     else:
         picture_form = PictureForm()
+        user = request.user
+        if (user not in mix.user_listens.all()):
+            mix.user_listens.add(user)
+
         return render(
             request,
             'mixes/mix.html',
             {
                 'mix': mix,
-                'user': request.user,
+                'user': user,
                 'mix_songs': MixSong.objects.filter(mix=mix),
                 'is_user_mix': is_user_mix,
                 'picture_form': picture_form
