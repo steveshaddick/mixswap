@@ -43,6 +43,19 @@ class Song(models.Model):
     def __unicode__(self):
         return self.title + '_' + self.artist
 
+    def save(self, *args, **kwargs):
+        if ('update_fields' in kwargs):
+            if ('title' in kwargs['update_fields']):
+                metaData = EasyID3(settings.MEDIA_ROOT + self.song_file.name.encode('ascii', 'ignore'))
+                metaData['title'] = self.title
+                metaData.save()
+            elif ('artist' in kwargs['update_fields']):
+                metaData = EasyID3(settings.MEDIA_ROOT + self.song_file.name.encode('ascii', 'ignore'))
+                metaData['artist'] = self.artist
+                metaData.save()
+                
+        super(Song, self).save(*args, **kwargs)
+
     @classmethod
     def create(cls, params):
         file_type = ''

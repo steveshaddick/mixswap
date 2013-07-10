@@ -115,13 +115,14 @@
 		}
 
 		.song-order {
-			width:25px;
+			width:15px;
 			display:block;
 			position:absolute;
 			top:5px;
 			left:5px;
 			color:#848484;
 			font-size:10px;
+			cursor:default;
 		}
 		.song-title {
 			display: inline-block;
@@ -377,9 +378,28 @@
 			color:#666;
 
 			input {
-				margin: 22px 0;
+				margin: 5px 0;
 				width:100%;
 				padding:5px;
+			}
+		}
+	}
+
+	.song-list {
+
+		.editable-click {
+			border:0;
+		}
+		.editable-input {
+			margin-left: 15px;
+			width:300px;
+
+			input {
+				margin: 0;
+				width:100%;
+				padding:5px;
+				font-weight: normal;
+				font-size:14px;
 			}
 		}
 	}

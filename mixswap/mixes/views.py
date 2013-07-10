@@ -204,6 +204,14 @@ def update_song(request, pk, song_id):
                 mix_song.save()
                 response['total_fav'] = mix_song.favourites.count()
 
+            elif ('title' in data):
+                song.title = data['title']
+                song.save(update_fields=['title'])
+
+            elif ('artist' in data):
+                song.artist = data['artist']
+                song.save(update_fields=['artist'])
+
             return jsonResponse(True, response)
 
     return jsonResponse(True, {'hey': request.META['HTTP_X_HTTP_METHOD_OVERRIDE']})

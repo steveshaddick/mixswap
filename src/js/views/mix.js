@@ -66,6 +66,10 @@ var MixView = Backbone.View.extend({
 		$('#mixTitle').editable('destroy').off('save');
 		this.songs.$el.off('click', '.song-delete');
 
+		$('.song-title').editable('destroy').off('save');
+		$('.song-artist').editable('destroy').off('save');
+		
+
 		$("#removeBG").off('click');
 		$("#publishMixLink").off('click');
 
@@ -93,9 +97,29 @@ var MixView = Backbone.View.extend({
 			type: 'text',
 			showbuttons: false,
 			title: 'Enter title',
-			inputclass: 'mix-title'
+			inputclass: 'mix-title',
+			unsavedclass: null
 		}).on('save', function(e, params){
 			that.model.set('title', params.newValue);
+		});
+
+		$('.song-title').editable({	
+			type: 'text',
+			showbuttons: false,
+			title: 'Song title',
+			toggle: 'dblclick',
+			unsavedclass: null
+		}).on('save', function(e, params){
+			that.songs.editSong($(this).attr('data-id'), 'title', params.newValue);
+		});
+		$('.song-artist').editable({	
+			type: 'text',
+			showbuttons: false,
+			title: 'Song artist',
+			toggle: 'dblclick'
+		}).on('save', function(e, params){
+			that.songs.editSong($(this).attr('data-id'), 'artist', params.newValue);
+			$(this).removeClass('editable-unsaved');
 		});
 
 		this.songs.$el.on('click', '.song-delete', function() {
@@ -309,13 +333,7 @@ var MixView = Backbone.View.extend({
 		$("#mixTitle").html(this.model.attributes.title);
 		$("#mixUsername").html('by ' + this.model.attributes.username);
 
-		if (this.options.isUserMix) {
-			$('body').addClass('admin');
 
-			if (!this.options.isPublished){
-				this.setUnpublished();
-			}
-		}
 
 		this.renderPictureFile();
 		this.songs.collection.trigger('reset');
@@ -326,7 +344,7 @@ var MixView = Backbone.View.extend({
 		}
 
 		var that = this;
-		this.songs.$el.on('click', '.song-wrapper', function() {
+		/*this.songs.$el.on('click', '.song-wrapper', function() {
 			if (that.isSorting) return;
 
 			$item = $(this).parent();
@@ -334,7 +352,7 @@ var MixView = Backbone.View.extend({
 			if (this.currentPlayingSong != song) {
 				that.playSong(song);
 			}
-		});
+		});*/
 
 		this.songs.$el.on('change', '.favourite-checkbox', function() {
 			$item = $(this).parent();
@@ -365,6 +383,14 @@ var MixView = Backbone.View.extend({
 			that.comments.collection.add(comment);
 			$("#txtAddComment").val('');
 		});
+
+		if (this.options.isUserMix) {
+			$('body').addClass('admin');
+
+			if (!this.options.isPublished){
+				this.setUnpublished();
+			}
+		}
 
 		//EventDispatcher.addEventListener('songStop', function(){ that.songStopHandler(); });
 		EventDispatcher.addEventListener('songEnded', function(){ that.songEndedHandler(); });
@@ -425,6 +451,15 @@ var SongCollectionView = Backbone.View.extend({
 		this.$el.append(songView.render().$el);
 	},
 
+	editSong: function(id, attribute, value) {
+		this.collection.each(function(item) {
+			if (item.attributes.id == id) {
+				item.set(attribute, value);
+				//item.save();
+			}
+		});
+	},
+
 	renderReset: function() {
 
 		var that = this;
@@ -468,7 +503,8 @@ var SongCollectionView = Backbone.View.extend({
 var SongView = Backbone.View.extend({
 
 	initialize: function() {
-		this.listenTo(this.model, "change:title", this.renderTitle);
+		this.listenTo(this.model, "change:title", this.onChange);
+		this.listenTo(this.model, "change:artist", this.onChange);
 		this.listenTo(this.model, "change:songOrder", this.renderSongOrder);
 		this.listenTo(this.model, "change:totalFav", this.renderTotalFav);
 		this.listenTo(this.model, "destroy", this.onDestroy);
@@ -480,8 +516,8 @@ var SongView = Backbone.View.extend({
 		var $item = $("#tmpSongItem").clone();
 
 		$item.attr('id', this.id).attr('data-order', this.model.songOrder);
-		$('.song-title', $item).html(this.model.attributes.title);
-		$('.song-artist', $item).html(this.model.attributes.artist);
+		$('.song-title', $item).html(this.model.attributes.title).attr('data-id', this.model.attributes.id);
+		$('.song-artist', $item).html(this.model.attributes.artist).attr('data-id', this.model.attributes.id);
 		$('.song-order', $item).html(this.model.attributes.songOrder);
 		$('.total-favourite', $item).html(this.model.attributes.totalFav + " favs");
 		$('.favourite-checkbox', $item)[0].checked = this.model.attributes.isUserFav;
@@ -491,8 +527,8 @@ var SongView = Backbone.View.extend({
 		return this;
 	},
 
-	renderTitle: function() {
-		$('.song-title', this.$el).html(this.model.attributes.title);
+	onChange: function() {
+		this.model.save(this.model.changed, {patch: true});
 	},
 
 	renderSongOrder: function() {
