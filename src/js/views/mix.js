@@ -599,7 +599,7 @@ var CommentView = Backbone.View.extend({
 		$item.attr('id', '');
 		$('.username', $item).html(this.model.attributes.username);
 		$('.date', $item).html(this.model.attributes.date);
-		$('.text', $item).html(this.model.attributes.text);
+		$('.text', $item).html(this.model.attributes.text.replace(/\n/g, '<br>'));
 
 		this.$el = $item;
 

@@ -28,27 +28,42 @@ def jsonResponse(success, response={}):
 def send_email(type, *args, **kwargs):
     s = sendgrid.Sendgrid(settings.SENDGRID['username'], settings.SENDGRID['password'], secure=True)
 
+    if (settings.ENVIRONMENT == 'production'):
+        email_list = User.objects.filter(~Q(email='')).values_list('email', flat=True)
+    else:
+        email_list = ["banfangled@yahoo.ca"]
+
+    message_body = ''
+    subject = ''
     if (type == 'mix_published'):
-        if (settings.ENVIRONMENT == 'production'):
-            email_list = User.objects.filter(~Q(email='')).values_list('email', flat=True)
-        else:
-            email_list = ["banfangled@yahoo.ca"]
 
         t = loader.get_template('mixes/email/mix-published.html')
         c = Context({
             'user_name': kwargs['user_name'],
             'mix_title': kwargs['mix_title'],
-            'mix_id': kwargs['mix_id'],
-            'email_list': email_list
+            'mix_id': kwargs['mix_id']
         })
-        rendered = t.render(c)
+        message_body = t.render(c)
+        subject = "New Mix!"
 
-        message = sendgrid.Message("mixmaster@mix-swap.com", "New Mix!",  html2text.html2text(rendered), rendered)
+    elif (type == 'comment'):
+
+        t = loader.get_template('mixes/email/comment.html')
+        c = Context({
+            'user_name': kwargs['user_name'],
+            'mix_title': kwargs['mix_title'],
+            'mix_id': kwargs['mix_id'],
+            'comment': kwargs['comment']
+        })
+        message_body = t.render(c)
+        subject = "Comment on " + kwargs['mix_title']
+
+    if (message_body != ''):
+        message = sendgrid.Message("mixmaster@mix-swap.com", subject,  html2text.html2text(message_body), message_body)
         message.add_to(email_list)
 
         # use the Web API to send your message
         s.web.send(message)
-        print rendered
 
 
 @login_required
@@ -318,14 +333,23 @@ def add_comment(request, pk):
     except mix.DoesNotExist:
         return jsonResponse(False, {'error': 'No mix'})
 
+    user = request.user
     data = json.loads(request.body)
     comment = Comment(
-        user=request.user,
+        user=user,
         mix=mix,
         text=data['text'],
         date=datetime.datetime.now()
     )
     comment.save()
+
+    send_email(
+        'comment',
+        user_name=user.first_name,
+        mix_title=mix.title,
+        mix_id=mix.id,
+        comment=data['text'].replace('\n', '<br>').replace('\r', '')
+    )
 
     return jsonResponse(True)
 
@@ -349,6 +373,8 @@ def get_comments(request, pk):
             'mixId': mix.id
         }
         comments.append(comment)
+
+
 
     response = {
         'comments': comments

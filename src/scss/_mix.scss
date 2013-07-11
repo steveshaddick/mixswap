@@ -198,11 +198,13 @@
 		}
 
 		.comment-item {
-			padding:5px;
+			padding:10px 5px;
 			.username {
 				color: #848484;
 			    font-size: 14px;
 			    font-weight: bold;
+			    display:block;
+			    border-top:1px solid #cfcfcf;
 			}
 			.date {
 				font-size:10px;
