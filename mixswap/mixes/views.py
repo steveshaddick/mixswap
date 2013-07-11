@@ -3,8 +3,11 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.template import Context, loader
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.db.models import Q
 
 import os, json, datetime
+import sendgrid, html2text
 
 from mixes.models import Mix, Song, MixSong, Comment
 from mixes.forms import PictureForm, SongForm
@@ -20,6 +23,32 @@ def jsonResponse(success, response={}):
         response['success'] = True
 
     return HttpResponse(json.dumps(response), mimetype='application/json')
+
+
+def send_email(type, *args, **kwargs):
+    s = sendgrid.Sendgrid(settings.SENDGRID['username'], settings.SENDGRID['password'], secure=True)
+
+    if (type == 'mix_published'):
+        if (settings.ENVIRONMENT == 'production'):
+            email_list = User.objects.filter(~Q(email='')).values_list('email', flat=True)
+        else:
+            email_list = ["banfangled@yahoo.ca"]
+
+        t = loader.get_template('mixes/email/mix-published.html')
+        c = Context({
+            'user_name': kwargs['user_name'],
+            'mix_title': kwargs['mix_title'],
+            'mix_id': kwargs['mix_id'],
+            'email_list': email_list
+        })
+        rendered = t.render(c)
+
+        message = sendgrid.Message("mixmaster@mix-swap.com", "New Mix!",  html2text.html2text(rendered), rendered)
+        message.add_to(email_list)
+
+        # use the Web API to send your message
+        s.web.send(message)
+        print rendered
 
 
 @login_required
@@ -49,6 +78,13 @@ def mix(request, pk):
                 if (mix.is_published and mix.date_published is None):
                     mix.date_published = datetime.datetime.now()
                 mix.save()
+                if ('sendEmail' in data):
+                    send_email(
+                        'mix_published',
+                        user_name=request.user.first_name,
+                        mix_title=mix.title,
+                        mix_id=mix.id
+                    )
             
             response['method'] = 'patch'
 

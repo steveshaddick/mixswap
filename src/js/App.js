@@ -7,6 +7,38 @@ function csrfSafeMethod(method) {
 	return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
+var Modal = {
+
+	$modalWrapper: false,
+
+	open: function(url, clickHandler) {
+		if (this.$modalWrapper) {
+			Modal.close();
+		}
+		var that = this;
+
+		if (typeof clickHandler == "undefined") {
+			clickHandler = false;
+		}
+		this.$modalWrapper = $("#modalWrapper");
+		this.$modalWrapper.css('display', 'table');
+		$('td', this.$modalWrapper).html('<div class="loading">Loading ...</div>').load(url, function() {
+			if (clickHandler) {
+				that.$modalWrapper.on('click', 'a', clickHandler);
+			}
+		});
+	},
+
+
+	close: function() {
+		if (!this.$modalWrapper) return;
+
+		$('td', this.$modalWrapper).html('');
+		this.$modalWrapper.css('display', '').off('click');
+		this.$modalWrapper = false;
+	}
+};
+
 var AudioPlayer = {
 	
 	$audioPlayer: false,

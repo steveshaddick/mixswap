@@ -69,7 +69,6 @@ var MixView = Backbone.View.extend({
 		$('.song-title').editable('destroy').off('save');
 		$('.song-artist').editable('destroy').off('save');
 		
-
 		$("#removeBG").off('click');
 		$("#publishMixLink").off('click');
 
@@ -137,8 +136,25 @@ var MixView = Backbone.View.extend({
 		});
 
 		$("#publishMixLink").on('click', function() {
-			that.model.set('isPublished', true);
-			that.model.save(that.model.changed, {patch: true});
+			Modal.open('/static/html/modal/publish-email.html', function() {
+				switch ($(this).html()) {
+					case 'Yes':
+						that.model.set('isPublished', true);
+						that.model.changed.sendEmail = true;
+						that.model.save(that.model.changed, {patch: true});
+						break;
+
+					case 'No':
+						that.model.set('isPublished', true);
+						that.model.save(that.model.changed, {patch: true});
+						break;
+				}
+
+				Modal.close();
+			});
+			return;
+			
+			
 		});
 
 		this.songs.$el.sortable({

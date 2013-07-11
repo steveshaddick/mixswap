@@ -22,3 +22,47 @@ h1 {
 a img {
 	border:0;
 }
+
+#modalWrapper {
+	z-index:10000000;
+	position:fixed;
+	top:0;
+	left:0;
+	background: rgba(80,105,105,0.5);
+	height:100%;
+	width:100%;
+	display:none;
+	td {
+		vertical-align:middle;
+	}
+}
+
+.general-button {
+	display:inline-block;
+	padding:8px 20px;
+	color:#fff;
+	background:#545454;
+	text-decoration:none;
+	margin:0 5px;
+	&:hover {
+		background:#ababab;
+	}
+}
+
+.modal {
+	background: rgba(255,255,255,0.95);
+	/*position:absolute;
+	top:50%;
+	margin-top:-75px;
+	left:50%;
+	margin-left:-150px;*/
+	width:320px;
+	height:100px;
+	padding:20px;
+	margin:0 auto;
+	text-align:center;
+
+	&.publish-email {
+
+	}
+}
