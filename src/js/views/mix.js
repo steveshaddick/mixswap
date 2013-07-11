@@ -3,6 +3,9 @@ var MixView = Backbone.View.extend({
 	isPublished: true,
 	isSorting: false,
 	currentPlayingSong: false,
+	dblClicked: false,
+	dcTimeout: false,
+	playTimeout: false,
 	
 	initialize: function () {
 		this.listenTo(this.model, "change:title", this.onChange);
@@ -66,8 +69,8 @@ var MixView = Backbone.View.extend({
 		$('#mixTitle').editable('destroy').off('save');
 		this.songs.$el.off('click', '.song-delete');
 
-		$('.song-title').editable('destroy').off('save');
-		$('.song-artist').editable('destroy').off('save');
+		$('.song-title').editable('destroy').off('save shown hidden');
+		$('.song-artist').editable('destroy').off('save shown hidden');
 		
 		$("#removeBG").off('click');
 		$("#publishMixLink").off('click');
@@ -81,6 +84,8 @@ var MixView = Backbone.View.extend({
 		$("#picUploader").pluploadQueue().destroy();
 		$("#picUploader").unbind();
 		$('#uploadPictureForm').unbind();
+
+		this.dblClicked = false;
 
 		this.options.isPublished = this.isPublished = true;
 
@@ -110,7 +115,22 @@ var MixView = Backbone.View.extend({
 			unsavedclass: null
 		}).on('save', function(e, params){
 			that.songs.editSong($(this).attr('data-id'), 'title', params.newValue);
+		}).on('shown', function() {
+			that.dblClicked = true;
+			if (that.dcTimeout) {
+				clearTimeout(that.dcTimeout);
+				that.dcTimeout = false;
+			}
+		}).on('hidden', function() {
+			if (that.dcTimeout) {
+				clearTimeout(that.dcTimeout);
+				that.dcTimeout = false;
+			}
+			that.dcTimeout = setTimeout(function() {
+				that.dblClicked = false;
+			},1000);
 		});
+
 		$('.song-artist').editable({	
 			type: 'text',
 			showbuttons: false,
@@ -119,7 +139,22 @@ var MixView = Backbone.View.extend({
 		}).on('save', function(e, params){
 			that.songs.editSong($(this).attr('data-id'), 'artist', params.newValue);
 			$(this).removeClass('editable-unsaved');
+		}).on('shown', function() {
+			that.dblClicked = true;
+			if (that.dcTimeout) {
+				clearTimeout(that.dcTimeout);
+				that.dcTimeout = false;
+			}
+		}).on('hidden', function() {
+			if (that.dcTimeout) {
+				clearTimeout(that.dcTimeout);
+				that.dcTimeout = false;
+			}
+			that.dcTimeout = setTimeout(function() {
+				that.dblClicked = false;
+			},1000);
 		});
+
 
 		this.songs.$el.on('click', '.song-delete', function() {
 			$item = $(this).parent();
@@ -360,15 +395,27 @@ var MixView = Backbone.View.extend({
 		}
 
 		var that = this;
-		/*this.songs.$el.on('click', '.song-wrapper', function() {
+		this.songs.$el.on('click', '.song-wrapper', function() {
 			if (that.isSorting) return;
 
-			$item = $(this).parent();
-			var song = that.songs.collection.get($item.attr('id').replace('song_', ''));
-			if (this.currentPlayingSong != song) {
-				that.playSong(song);
+			var delay = (that.isPublished) ? 0 : 500;
+
+			if (that.playTimeout) {
+				clearTimeout(that.playTimeout);
 			}
-		});*/
+			$item = $(this).parent();
+			that.playTimeout= setTimeout(function() {
+				if (that.dblClicked) {
+					return;
+				}
+				var song = that.songs.collection.get($item.attr('id').replace('song_', ''));
+				if (this.currentPlayingSong != song) {
+					that.playSong(song);
+				}
+
+			}, delay);
+			
+		});
 
 		this.songs.$el.on('change', '.favourite-checkbox', function() {
 			$item = $(this).parent();

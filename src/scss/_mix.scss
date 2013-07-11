@@ -152,6 +152,10 @@
 		}
 	}
 
+	.song-wrapper {
+		cursor:default;
+	}
+
 	.song-delete,
 	.publish-mix-block {
 		display:none;
@@ -352,6 +356,10 @@
 			float:none;
 			margin-top:12px;
 			font-weight: bold;
+		}
+
+		.song-wrapper {
+			cursor:auto;
 		}
 
 	}
