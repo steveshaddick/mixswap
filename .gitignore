@@ -11,6 +11,7 @@ mixswap/settings/
 /node_modules/
 /media/
 /config/
+migrations/
 
 !mixswap/settings/defaults.py
 !mixswap/settings/__init__.pydows
