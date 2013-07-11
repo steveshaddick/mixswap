@@ -102,7 +102,8 @@ var MixView = Backbone.View.extend({
 			showbuttons: false,
 			title: 'Enter title',
 			inputclass: 'mix-title',
-			unsavedclass: null
+			unsavedclass: null,
+			emptyclass: ''
 		}).on('save', function(e, params){
 			that.model.set('title', params.newValue);
 		});
@@ -112,7 +113,8 @@ var MixView = Backbone.View.extend({
 			showbuttons: false,
 			title: 'Song title',
 			toggle: 'dblclick',
-			unsavedclass: null
+			unsavedclass: null,
+			emptyclass: ''
 		}).on('save', function(e, params){
 			that.songs.editSong($(this).attr('data-id'), 'title', params.newValue);
 		}).on('shown', function() {
@@ -135,7 +137,9 @@ var MixView = Backbone.View.extend({
 			type: 'text',
 			showbuttons: false,
 			title: 'Song artist',
-			toggle: 'dblclick'
+			toggle: 'dblclick',
+			unsavedclass: null,
+			emptyclass: ''
 		}).on('save', function(e, params){
 			that.songs.editSong($(this).attr('data-id'), 'artist', params.newValue);
 			$(this).removeClass('editable-unsaved');
@@ -253,12 +257,67 @@ var MixView = Backbone.View.extend({
 					if (data.success) {
 						song = new SongModel({
 							id: data.song_id,
+							mixId: that.model.attributes.id,
 							artist: data.artist,
 							title: data.title,
 							songOrder: data.song_order,
 							songFile: data.song_file
 						});
 						that.songs.collection.add(song);
+
+						if (!that.isPublished) {
+							$('.song-title', $("#song_" + song.id)).editable({	
+								type: 'text',
+								showbuttons: false,
+								title: 'Song title',
+								toggle: 'dblclick',
+								unsavedclass: null,
+								emptyclass: ''
+							}).on('save', function(e, params){
+								that.songs.editSong($(this).attr('data-id'), 'title', params.newValue);
+							}).on('shown', function() {
+								that.dblClicked = true;
+								if (that.dcTimeout) {
+									clearTimeout(that.dcTimeout);
+									that.dcTimeout = false;
+								}
+							}).on('hidden', function() {
+								if (that.dcTimeout) {
+									clearTimeout(that.dcTimeout);
+									that.dcTimeout = false;
+								}
+								that.dcTimeout = setTimeout(function() {
+									that.dblClicked = false;
+								},1000);
+							});
+
+							$('.song-artist', $("#song_" + song.id)).editable({	
+								type: 'text',
+								showbuttons: false,
+								title: 'Song artist',
+								toggle: 'dblclick',
+								unsavedclass: null,
+								emptyclass: ''
+							}).on('save', function(e, params){
+								that.songs.editSong($(this).attr('data-id'), 'artist', params.newValue);
+								$(this).removeClass('editable-unsaved');
+							}).on('shown', function() {
+								that.dblClicked = true;
+								if (that.dcTimeout) {
+									clearTimeout(that.dcTimeout);
+									that.dcTimeout = false;
+								}
+							}).on('hidden', function() {
+								if (that.dcTimeout) {
+									clearTimeout(that.dcTimeout);
+									that.dcTimeout = false;
+								}
+								that.dcTimeout = setTimeout(function() {
+									that.dblClicked = false;
+								},1000);
+							});
+						}
+
 					} else {
 						alert("There was an error uploading: " + data.error);
 					}
