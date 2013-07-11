@@ -1,3 +1,4 @@
+
 *.log
 *.pot
 *.pyc
@@ -15,3 +16,4 @@ migrations/
 
 !mixswap/settings/defaults.py
 !mixswap/settings/__init__.pydows
+
