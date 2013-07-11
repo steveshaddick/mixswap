@@ -5,5 +5,5 @@ from home import views
 urlpatterns = patterns(
     '',
     url(r'^$', views.home, name='home'),
-    url(r'^top-favs/$', views.top_favs, name='top_favs'),
+    url(r'^top_favs/$', views.top_favs, name='top_favs'),
 )

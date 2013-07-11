@@ -1,1 +1,30 @@
-Top Favs
+{% extends 'base.html' %}
+{% block page_class %}home top-favs{% endblock %}
+
+{% block content %}
+<h1>mix(s)wap</h1>
+
+<nav>
+	<a href="{% url 'home:home' %}">&lt; Home</a>
+</nav>
+
+<div class="all-mixes-block">
+	<header><h2>Top 10 favourited mixes</h2></header>
+	<table class="mix-list-table all-mixes-table">
+		{% for mix in mixes %}
+			<tr class="mix-item">
+				<td class="place-count">{{ forloop.counter }})</td>
+				<td class="mix-image">{% if mix.picture_file %}<a href="{% url 'mixes:mix' mix.id %}"><img src="{{ mix.picture_file.url }}" alt=""></a>{% endif %}</td>
+				<td class="mix-title">
+					<a href="{% url 'mixes:mix' mix.id %}" {% if user not in mix.user_listens.all %} class="unheard" {% endif %}>{{ mix.title }}</a>
+					<span class="username">{{ mix.user.first_name }} - {{ mix.date_published }}</span>
+				</td>
+				<td class="fav-count">{{ mix.num_favs }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+</div>
+
+<br class="clear">
+{% endblock %}
+

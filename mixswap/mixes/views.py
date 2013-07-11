@@ -348,7 +348,7 @@ def add_comment(request, pk):
         user_name=user.first_name,
         mix_title=mix.title,
         mix_id=mix.id,
-        comment=data['text'].replace('\n', '<br>').replace('\r', '')
+        comment=data['text'].replace('\n', '<br />').replace('\r', '')
     )
 
     return jsonResponse(True)
