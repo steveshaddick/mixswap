@@ -318,7 +318,10 @@ def delete_picture(request, pk, return_http=True):
         return jsonResponse(False, {'error': 'Bad user.'})
 
     if (mix.picture_file != ''):
-        os.remove(settings.MEDIA_ROOT + str(mix.picture_file))
+        try:
+            os.remove(settings.MEDIA_ROOT + str(mix.picture_file))
+        except OSError:
+            pass
         mix.picture_file = ''
         mix.save()
 
