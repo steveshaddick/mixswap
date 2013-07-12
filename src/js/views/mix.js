@@ -6,6 +6,7 @@ var MixView = Backbone.View.extend({
 	dblClicked: false,
 	dcTimeout: false,
 	playTimeout: false,
+	isUploading: false,
 	
 	initialize: function () {
 		this.listenTo(this.model, "change:title", this.onChange);
@@ -88,6 +89,8 @@ var MixView = Backbone.View.extend({
 		$('#uploadPictureForm').unbind();
 
 		this.dblClicked = false;
+
+		$(window).off('beforeunload');
 
 		this.options.isPublished = this.isPublished = true;
 
@@ -241,11 +244,16 @@ var MixView = Backbone.View.extend({
 					console.log('[error] ', args);
 				},
 
+				StateChanged: function(up) {
+					that.isUploading = (up.state == plupload.STARTED);
+				},
+
 				UploadComplete: function(up, args) {
 					// Called when the state of the queue is changed
 					//console.log('[UploadComplete]', up, args);
 					var uploader = $('#songUploader').pluploadQueue();
 					uploader.splice();
+					that.isUploading = false;
 
 					$('#songUploader .plupload_buttons').css('display', '');
 					$('#songUploader .plupload_upload_status').css('display', '');
@@ -435,7 +443,11 @@ var MixView = Backbone.View.extend({
 			return false;
 		});
 
-
+		$(window).on('beforeunload', function(){ 
+			if (that.isUploading) {
+				return 'You are uploading songs - are you sure you want to leave?';
+			}
+		});
 
 		this.options.isPublished = this.isPublished = false;
 	},
