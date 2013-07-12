@@ -25,6 +25,7 @@
         
         <section id="audioPlayer">
             <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+            <div id="jquery_jplayer_2" class="jp-jplayer"></div>
             <div id="jp_container_1" class="jp-audio">
             <div class="jp-type-single">
               <div class="jp-gui jp-interface">
@@ -55,6 +56,7 @@
               </div>
             </div>
             </div>
+            <div id="jp_container_2" class="jp-audio"></div>
         </section>
         
         <section id="mixList" class="mix-list">
@@ -98,7 +100,7 @@
 </footer>
 
 <section id="templates" style="display:none;">
-	
+	<ul>
     <li id="tmpSongItem" class="song-item">        
         <input id="chkFavourite" name="chkFavourite" class="favourite-checkbox" title="Favourite Track" type="checkbox" />
         <div class="song-wrapper">
@@ -108,10 +110,11 @@
         </div>
         <a class="song-delete" href="javascript:;">x</a>
     </li>
+    </ul>
     
     <div id="tmpCommentItem" class="comment-item">
         <span class="text"></span>
-    	<span class="username"></span> <time class="date" datetime=""></time>
+    	<span class="username"></span> <time class="date"></time>
     </div>
     
    <iframe id="iUpload" name="iUpload" src="#" style="display:none;visibility:hidden;width:0;height:0;"></iframe> 

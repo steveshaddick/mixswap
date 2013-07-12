@@ -32,8 +32,10 @@ var MixView = Backbone.View.extend({
 		}
 
 		this.currentPlayingSong = song;
+
+		var preloadSong = this.songs.collection.findWhere({songOrder: this.currentPlayingSong.attributes.songOrder + 1});
 		$("#song_" + this.currentPlayingSong.id).addClass('playing');
-		EventDispatcher.dispatchEvent('songPlay', {song: this.currentPlayingSong, autoPlay: autoPlay} );
+		EventDispatcher.dispatchEvent('songPlay', {song: this.currentPlayingSong, preloadSong: preloadSong, autoPlay: autoPlay} );
 	},
 
 	songStopHandler: function() {
@@ -514,7 +516,6 @@ var MixView = Backbone.View.extend({
 			}
 		}
 
-		//EventDispatcher.addEventListener('songStop', function(){ that.songStopHandler(); });
 		EventDispatcher.addEventListener('songEnded', function(){ that.songEndedHandler(); });
 
 		return this;

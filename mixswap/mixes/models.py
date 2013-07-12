@@ -41,7 +41,7 @@ def get_audio_meta(file):
 
 class Mix(models.Model):
     user = models.ForeignKey(User)
-    title = models.CharField(default='New Mix', max_length=50)
+    title = models.CharField(default='New Mix', max_length=100)
     picture_file = models.ImageField(upload_to=get_photo_upload_path, blank=True, null=True)
     is_published = models.BooleanField()
     date_published = models.DateField(default=None, blank=True, null=True)

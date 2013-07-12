@@ -41,23 +41,27 @@ var Modal = {
 
 var AudioPlayer = {
 	
-	$audioPlayer: false,
+	$audioPlayer1: false,
+	$audioPlayer2: false,
 	$container: false,
 	isReady: false,
-	readySong: false,
+	readySong1: false,
+	readySong2: false,
+	readyPreload: false,
 	readyPlay: false,
 
 	init: function() {
 		var that = this;
 
-		this.$audioPlayer = $("#jquery_jplayer_1");
+		this.$audioPlayer1 = $("#jquery_jplayer_1");
+		this.$audioPlayer2 = $("#jquery_jplayer_2");
 		this.$container = $("#jp_container_1");
 
-		this.$audioPlayer.jPlayer({	
+		this.$audioPlayer1.jPlayer({	
 			ready: function() {
 				that.isReady = true;
-				if (that.readySong) {
-					AudioPlayer.play(that.readySong, that.readyPlay);
+				if (that.readySong1) {
+					AudioPlayer.play(that.readySong1, that.readyPreload, that.readyPlay);
 				}
 			},
 			ended: function() {
@@ -68,33 +72,75 @@ var AudioPlayer = {
 			},
 			preload: "auto",
 			swfPath: "/js",
-			supplied: "mp3,m4a"
+			supplied: "mp3,m4a",
+			cssSelectorAncestor: "#jp_container_1"
 		});
 
-		EventDispatcher.addEventListener('songPlay', function(obj){ that.play(obj.song, obj.autoPlay); });
+		this.$audioPlayer2.jPlayer({	
+			ready: function() {
+				that.isReady = true;
+				if (that.readySong2) {
+					AudioPlayer.play(that.readySong2, that.readyPreload, that.readyPlay);
+				}
+			},
+			ended: function() {
+				EventDispatcher.dispatchEvent('songEnded');
+			},
+			pause: function() {
+				EventDispatcher.dispatchEvent('songStop');
+			},
+			preload: "auto",
+			swfPath: "/js",
+			supplied: "mp3,m4a",
+			cssSelectorAncestor: "#jp_container_2"
+		});
+
+		EventDispatcher.addEventListener('songPlay', function(obj){ that.play(obj.song, obj.preloadSong, obj.autoPlay); });
 	},
 
-	play: function(song, autoPlay) {
+	play: function(song, preloadSong, autoPlay) {
 		if (typeof autoPlay == "undefined") {
 			autoPlay = true;
 		}
+		var isOdd = (song.attributes.songOrder % 2) === 1;
+		
+
 		if (!this.isReady) {
-			this.readySong = song;
 			this.readyPlay = autoPlay;
+			if (isOdd) {
+				this.readySong1 = song;
+			} else {
+				this.readySong2 = song;
+			}
+			this.readyPreload = preloadSong;
 			return;
 		}
+
+		var player = (isOdd) ? this.$audioPlayer1 : this.$audioPlayer2;
 		var file = song.attributes.songFile;
 		var ext = file.substr(file.lastIndexOf('.') + 1);
-
 		var mediaObj = {};
 		mediaObj[ext] = file;
 
-		this.$audioPlayer.jPlayer("setMedia", mediaObj);
-		if (autoPlay) {
-			this.$audioPlayer.jPlayer("play");
-		}
+		this.$audioPlayer1.jPlayer("option", "cssSelectorAncestor", "");
+		this.$audioPlayer2.jPlayer("option", "cssSelectorAncestor", "");
 
+		player.jPlayer("option", "cssSelectorAncestor", "#jp_container_1").jPlayer("setMedia", mediaObj);
+		if (autoPlay) {
+			player.jPlayer("play");
+		}
 		$('.jp-title', this.$container).html(song.attributes.title);
+		
+		var preloader;
+		if (preloadSong) {
+			preloader = (isOdd) ? this.$audioPlayer2 : this.$audioPlayer1;
+			file = preloadSong.attributes.songFile;
+			ext = file.substr(file.lastIndexOf('.') + 1);
+
+			mediaObj = {};
+			mediaObj[ext] = file;
+			preloader.jPlayer("setMedia", mediaObj);
+		}
 
 		this.readySong = false;
 	}

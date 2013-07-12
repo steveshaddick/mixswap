@@ -66,3 +66,24 @@ a img {
 
 	}
 }
+
+.centering-table {
+	height:100%;
+	width:100%;
+	position:fixed;
+	top:0;
+	left:0;
+	td {
+		vertical-align:middle;
+	}
+}
+
+
+.main-wrapper {
+	min-height:100%;
+	background: no-repeat center top fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
