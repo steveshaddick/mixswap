@@ -122,8 +122,8 @@ var AudioPlayer = {
 		var mediaObj = {};
 		mediaObj[ext] = file;
 
-		this.$audioPlayer1.jPlayer("option", "cssSelectorAncestor", "");
-		this.$audioPlayer2.jPlayer("option", "cssSelectorAncestor", "");
+		this.$audioPlayer1.jPlayer("pause").jPlayer("option", "cssSelectorAncestor", "");
+		this.$audioPlayer2.jPlayer("pause").jPlayer("option", "cssSelectorAncestor", "");
 
 		player.jPlayer("option", "cssSelectorAncestor", "#jp_container_1").jPlayer("setMedia", mediaObj);
 		if (autoPlay) {
