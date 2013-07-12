@@ -27,7 +27,7 @@ def get_audio_meta(file):
         elif ('audio/mpeg' in mime):
             file_type = 'mp3'
         else:
-            file_type = 'unknown'
+            file_type = 'mp3'
     else:
         file_type = 'mp3'
 
