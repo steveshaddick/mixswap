@@ -49,6 +49,7 @@ var AudioPlayer = {
 	readySong2: false,
 	readyPreload: false,
 	readyPlay: false,
+	preloadTimeout:false,
 
 	init: function() {
 		var that = this;
@@ -132,6 +133,10 @@ var AudioPlayer = {
 		$('.jp-title', this.$container).html(song.attributes.title);
 		
 		var preloader;
+		if (this.preloadTimeout) {
+			clearTimeout(this.preloadTimeout);
+			this.preloadTimeout = false;
+		}
 		if (preloadSong) {
 			preloader = (isOdd) ? this.$audioPlayer2 : this.$audioPlayer1;
 			file = preloadSong.attributes.songFile;
@@ -139,7 +144,9 @@ var AudioPlayer = {
 
 			mediaObj = {};
 			mediaObj[ext] = file;
-			preloader.jPlayer("setMedia", mediaObj);
+			this.preloadTimeout = setTimeout(function() {
+				preloader.jPlayer("setMedia", mediaObj);
+			},2000);
 		}
 
 		this.readySong = false;
