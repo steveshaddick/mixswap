@@ -458,7 +458,6 @@ var MixView = Backbone.View.extend({
 		$("#mixUsername").html('by ' + this.model.attributes.username);
 
 
-
 		this.renderPictureFile();
 		this.songs.collection.trigger('reset');
 

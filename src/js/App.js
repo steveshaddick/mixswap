@@ -77,7 +77,7 @@ var AudioPlayer = {
 			cssSelectorAncestor: "#jp_container_1"
 		});
 
-		this.$audioPlayer2.jPlayer({	
+		/*this.$audioPlayer2.jPlayer({	
 			ready: function() {
 				that.isReady = true;
 				if (that.readySong2) {
@@ -94,7 +94,7 @@ var AudioPlayer = {
 			swfPath: "/js",
 			supplied: "mp3,m4a",
 			cssSelectorAncestor: "#jp_container_2"
-		});
+		});*/
 
 		EventDispatcher.addEventListener('songPlay', function(obj){ that.play(obj.song, obj.preloadSong, obj.autoPlay); });
 	},
@@ -104,7 +104,7 @@ var AudioPlayer = {
 			autoPlay = true;
 		}
 		var isOdd = (song.attributes.songOrder % 2) === 1;
-		
+		isOdd = 1;
 
 		if (!this.isReady) {
 			this.readyPlay = autoPlay;
@@ -123,16 +123,17 @@ var AudioPlayer = {
 		var mediaObj = {};
 		mediaObj[ext] = file;
 
-		this.$audioPlayer1.jPlayer("pause").jPlayer("option", "cssSelectorAncestor", "");
+		/*this.$audioPlayer1.jPlayer("pause").jPlayer("option", "cssSelectorAncestor", "");
 		this.$audioPlayer2.jPlayer("pause").jPlayer("option", "cssSelectorAncestor", "");
 
-		player.jPlayer("option", "cssSelectorAncestor", "#jp_container_1").jPlayer("setMedia", mediaObj);
+		player.jPlayer("option", "cssSelectorAncestor", "#jp_container_1").jPlayer("setMedia", mediaObj);*/
+		player.jPlayer("setMedia", mediaObj);
 		if (autoPlay) {
 			player.jPlayer("play");
 		}
 		$('.jp-title', this.$container).html(song.attributes.title);
-		
-		var preloader;
+
+		/*var preloader;
 		if (this.preloadTimeout) {
 			clearTimeout(this.preloadTimeout);
 			this.preloadTimeout = false;
@@ -147,7 +148,7 @@ var AudioPlayer = {
 			this.preloadTimeout = setTimeout(function() {
 				preloader.jPlayer("setMedia", mediaObj);
 			},2000);
-		}
+		}*/
 
 		this.readySong = false;
 	}
@@ -218,9 +219,16 @@ var Home = {
 
 };
 
+var isInit = false;
+
 var App = {
 
+	isInit:false,
+
 	init: function(data) {
+
+		if (isInit) return;
+		isInit = true;
 
 		GLOBAL.csrfToken = Cookie.get('csrftoken');
 
