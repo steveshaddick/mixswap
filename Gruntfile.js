@@ -74,7 +74,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compass');
 
   // Default task.
-  grunt.registerTask('default', ['compass', 'uglify:dev', 'watch']);
-  grunt.registerTask('prod', ['compass', 'uglify:prod']);
+  grunt.registerTask('default', ['compass', 'uglify:prod', 'watch']);
+  grunt.registerTask('dev', ['compass', 'uglify:dev']);
 
 };
