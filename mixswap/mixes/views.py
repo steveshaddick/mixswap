@@ -418,4 +418,5 @@ def download_mix(request, pk):
 
     response = HttpResponse(open(settings.MEDIA_ROOT + download_file.name.encode('ascii', 'ignore'), 'rb').read(), content_type='application/zip')
     response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(download_file.name)
+    response['Content-Length'] = os.path.getsize(download_file.name)
     return response
