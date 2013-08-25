@@ -5,7 +5,7 @@ from mutagen.easymp4 import EasyMP4
 from mutagen.easyid3 import EasyID3
 
 import magic
-import os, re, time, datetime
+import os, re, time, datetime, zipfile, zlib
 
 
 def get_photo_upload_path(instance, filename):
@@ -15,6 +15,10 @@ def get_photo_upload_path(instance, filename):
 def get_audio_upload_path(instance, filename):
     pattern = re.compile('[^a-zA-z0-9.]+')
     return os.path.join("user_%d" % instance.user.id, "audio", "mix_%d" % instance.primary_mix.id, pattern.sub('', filename))
+
+def get_zipfile_path(instance, filename):
+    pattern = re.compile('[^a-zA-z0-9.]+')
+    return os.path.join("user_%d" % instance.user.id, "downloads", pattern.sub('_', filename))
 
 
 def get_audio_meta(file):
@@ -47,6 +51,7 @@ class Mix(models.Model):
     date_published = models.DateField(default=None, blank=True, null=True)
     songs = models.ManyToManyField('Song', through='MixSong', blank=True, null=True)
     user_listens = models.ManyToManyField(User, related_name='listens+')
+    download_file = models.FileField(upload_to=get_zipfile_path, max_length=200, default=None, blank=True)
 
     class Meta:
         verbose_name_plural = "mixes"
@@ -54,13 +59,56 @@ class Mix(models.Model):
     def __unicode__(self):
         return self.title
 
+    def get_download_file(self):
+
+        if (self.download_file != ''):
+            return self.download_file
+
+        mixsongs = MixSong.objects.filter(mix_id=self.id).order_by('song_order')
+
+        pattern = re.compile('[^a-zA-z0-9.]+')
+        zipfile_name = "user_%d" % self.user.id + "/downloads" + "/" + pattern.sub('_', self.title + '.zip') 
+        
+        if (zipfile_name == '.zip'):
+            zipfile_name = '_.zip'
+   
+        directory = os.path.join(settings.MEDIA_ROOT, "user_%d" % self.user.id, "downloads")
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+        
+        archive = zipfile.ZipFile(settings.MEDIA_ROOT + zipfile_name, 'w', compression=zipfile.ZIP_DEFLATED)
+
+        added_file = False
+        length = len(mixsongs)
+        for mixsong in mixsongs:
+            
+            meta_data = get_audio_meta(settings.MEDIA_ROOT + mixsong.song.song_file.name.encode('ascii', 'ignore'))
+            if (meta_data is not False):
+                meta_data['album'] = self.title
+                meta_data['tracknumber'] = unicode(str(mixsong.song_order) + '/' + str(length))
+                meta_data.save()
+
+            archive.write(settings.MEDIA_ROOT + mixsong.song.song_file.name.encode('ascii', 'ignore'), arcname=os.path.basename(mixsong.song.song_file.name), compress_type=zipfile.ZIP_DEFLATED)
+            added_file = True
+        
+        archive.close()
+
+        if (added_file):
+            self.download_file = zipfile_name
+            self.save()
+
+            return self.download_file
+        
+        else:
+            return ''
+
 
 class Song(models.Model):
     user = models.ForeignKey(User)
     title = models.CharField(max_length=100)
     artist = models.CharField(max_length=100)
     primary_mix = models.ForeignKey(Mix, related_name='primary+')
-    song_file = models.FileField(upload_to=get_audio_upload_path, default='file')
+    song_file = models.FileField(upload_to=get_audio_upload_path, max_length=200, default='file')
     date_uploaded = models.DateTimeField()
 
     def __unicode__(self):

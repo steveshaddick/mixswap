@@ -13,7 +13,7 @@
         <header>
             <h1 id="mixTitle" class="mix-title"></h1>
             <span id="mixUsername" class="mix-user"></span>
-            <!-- <a id="downloadMixLink" class="download-mix-link" href="{{ 'download' }}">Download</a> -->
+            <a id="downloadMixLink" class="download-mix-link" href="{% url 'mixes:download_mix' mix.pk %}">Download</a>
             <a href="javascript:;" id="unpublishMixLink" class="unpublish-mix-link">Unpublish</a>
             <a href="javascript:;" id="publishMixLink" class="publish-mix-link">Publish</a>
             <a href="{% url 'home:home' %}" class="home-link">Home</a>

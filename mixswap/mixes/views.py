@@ -5,12 +5,35 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.db.models import Q
+from django.core.servers.basehttp import FileWrapper
 
 import os, json, datetime
 import sendgrid, html2text
 
 from mixes.models import Mix, Song, MixSong, Comment
 from mixes.forms import PictureForm, SongForm
+
+
+def get_audio_meta(file):
+    file_type = ''
+    if (settings.ENVIRONMENT != 'local'):
+       # magic_object = magic.Magic()
+        mime = magic.from_file(file, mime=True)
+        if ('audio/mp4' in mime):
+            file_type = 'm4a'
+        elif ('audio/mpeg' in mime):
+            file_type = 'mp3'
+        else:
+            file_type = 'unknown'
+    else:
+        file_type = 'mp3'
+
+    if (file_type == 'mp3'):
+        return EasyID3(file)
+    elif (file_type == 'm4a'):
+        return EasyMP4(file)
+    else:
+        return False
 
 
 def jsonResponse(success, response={}):
@@ -384,3 +407,19 @@ def get_comments(request, pk):
     }
 
     return jsonResponse(True, response)
+
+
+@login_required
+def download_mix(request, pk):
+    mix = get_object_or_404(Mix, pk=pk)
+    is_published = mix.is_published
+
+    if (not is_published):
+        raise Http404
+
+    download_file = mix.get_download_file()
+
+    response = HttpResponse(open(settings.MEDIA_ROOT + download_file.name.encode('ascii', 'ignore'), 'rb').read(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(download_file.name)
+    response['Content-Length'] = os.path.getsize(settings.MEDIA_ROOT + download_file.name.encode('ascii', 'ignore'))
+    return response
