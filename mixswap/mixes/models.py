@@ -79,13 +79,14 @@ class Mix(models.Model):
         archive = zipfile.ZipFile(settings.MEDIA_ROOT + zipfile_name, 'w', compression=zipfile.ZIP_DEFLATED)
 
         added_file = False
+        length = len(mixsongs)
         for mixsong in mixsongs:
             
             meta_data = get_audio_meta(settings.MEDIA_ROOT + mixsong.song.song_file.name.encode('ascii', 'ignore'))
             if (meta_data is not False):
                 meta_data['album'] = self.title
-                meta_data['tracknumber'] = unicode(mixsong.song_order)
-                meta_data.save()  
+                meta_data['tracknumber'] = unicode(str(mixsong.song_order) + '/' + str(length))
+                meta_data.save()
 
             archive.write(settings.MEDIA_ROOT + mixsong.song.song_file.name.encode('ascii', 'ignore'), arcname=os.path.basename(mixsong.song.song_file.name), compress_type=zipfile.ZIP_DEFLATED)
             added_file = True
