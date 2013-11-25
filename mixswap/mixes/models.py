@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
+from django.utils import timezone
+import mutagen
 from mutagen.easymp4 import EasyMP4
 from mutagen.easyid3 import EasyID3
 
@@ -36,9 +38,17 @@ def get_audio_meta(file):
         file_type = 'mp3'
 
     if (file_type == 'mp3'):
-        return EasyID3(file)
+        try:
+            return EasyID3(file)
+        except mutagen.id3.ID3NoHeaderError:
+            tags = mutagen.id3.ID3()
+            tags.add(mutagen.id3.TIT2(encoding=3, text=["Untitled"]))
+            tags.save(file)
+            return EasyID3(file)
+
     elif (file_type == 'm4a'):
         return EasyMP4(file)
+
     else:
         return False
 
@@ -136,8 +146,14 @@ class Song(models.Model):
         if (meta_data is False):
             return False
         
-        title = meta_data['title'][0].encode('ascii', 'ignore')
-        artist = meta_data['artist'][0].encode('ascii', 'ignore')
+        if ('title' in meta_data):
+            title = meta_data['title'][0].encode('ascii', 'ignore')
+        else:
+            title = 'Untitled'
+        if ('artist' in meta_data):
+            artist = meta_data['artist'][0].encode('ascii', 'ignore')
+        else:
+            artist = 'Unknown'
 
         song = cls(
             user=params['user'],
@@ -145,7 +161,7 @@ class Song(models.Model):
             artist=artist,
             primary_mix=params['mix'],
             song_file=params['song_file'],
-            date_uploaded=datetime.datetime.now()
+            date_uploaded=timezone.now()
         )
         return song
 
