@@ -59,7 +59,7 @@ module.exports = function(grunt) {
       },
       scripts: {
         files: SRC_PATH + '/js/**/*.js',
-        tasks: ['uglify:dev'],
+        tasks: ['uglify:prod'],
         options: {
           interrupt: true
         }

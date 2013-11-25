@@ -509,7 +509,7 @@ var MixView = Backbone.View.extend({
 
 			var now = new Date();
 			var comment = new CommentModel({
-				'username': that.model.get('username'),
+				'username': that.model.get('currentUsername'),
 				'date': now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate(),
 				'text': text,
 				'mixId': that.model.get('id')

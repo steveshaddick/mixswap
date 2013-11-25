@@ -131,6 +131,7 @@
             id: {{ mix.id }}, 
             title: '{{ mix.title }}',
             username: '{{ mix.user.first_name }}',
+            currentUsername: '{{ user.first_name }}',
             isUserMix: {% if is_user_mix %}true{% else %}false{% endif %}, 
             isPublished: {% if mix.is_published %}true{% else %}false{% endif %}, 
             pictureFile: '{% if mix.picture_file %}{{ mix.picture_file.url }}{% else %}{% endif %}',
